@@ -31,6 +31,16 @@
 
 ## Algorithms
 
+### Main
+```python
+get arguments
+for file_name in arguments:
+    file_name += '.as'
+    pre_assembly(file_name)
+    first_pass(file_name)
+    second_pass(file_name)
+```
+
 ### Pre-assembly
 ```python
 for line in source_code:
