@@ -1,14 +1,16 @@
+#include <stdio.h>
+#include "common.h"
 
 int main(int argc, char *argv[]);
 
 /**
- * @brief Infer files to process from commandline arguments
+ * @brief Build paths to process from commandline arguments
  * 
- * @param argc 
- * @param argv 
- * @param files a pointer which will be populated with the files names
+ * @param path_count
+ * @param file_names names of files without suffix 
+ * @param paths a pointer which will be populated with the files names
  */
-void infer_files(int argc, char *argv[], char *files[]);
+void assemblify_paths(int path_count, char *file_names[], char *paths[]);
 
 /**
  * @brief Run full assembler process on file
