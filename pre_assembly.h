@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "common.h"
 
 /**
  * @brief Perform pre-assembly algorithm
