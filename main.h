@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "common.h"
+#include "first_pass.h"
 
 int main(int argc, char *argv[]);
 
