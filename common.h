@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_LINE_LENGTH 81
+#define MAX_LINE_LENGTH 80 + 1 + 1  /* Line length + \n + \0 */
 #define SUCCESS 0
 #define FAILURE -1
 #define false 0
