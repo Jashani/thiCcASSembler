@@ -43,8 +43,8 @@ for file_name in arguments:
 
 ### Pre-assembly
 ```python
+is_macro = False
 for line in source_code:
-    is_macro = False
     if first field is macro found in macro table:
         remove macro line
         add macro contents from macro table
@@ -57,7 +57,6 @@ for line in source_code:
         if line is "endm":
             delete line
             is_macro = False
-            continue
         else:
             add line to macro table content
             delete line
