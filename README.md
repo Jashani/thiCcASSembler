@@ -2,7 +2,7 @@
 
 ## Notes
 * Machine word size is 24 bits.
-* There are four types of lines: instruction, direction (`.data`, `.string`, etc...), comment, empty line.
+* There are four types of lines: instruction, directive (`.data`, `.string`, etc...), comment, empty line.
 
 ## Assembler Steps
 1. Pre-assembly
@@ -71,7 +71,7 @@ for line in source_code:
     has_tag = False
     if first field is tag:
         has_tag = True
-    if line is .data or .string direction:
+    if line is .data or .string directive:
         if has_tag:
             if tag illegal or already in symbol table, print error
             add tag to symbol table with attribute "data"
@@ -106,9 +106,9 @@ for symbol in symbol table:
 ```python
 for line in source_code:
     if first field is tag, skip it
-    if line is .data or .string or .extern direction:
+    if line is .data or .string or .extern directive:
         continue
-    else if line is .entry direction:
+    else if line is .entry directive:
         if operand symbol not in symbol table, print error
         add "entry" attribute to symbol in symbol table
     complete binary encoding for operands
