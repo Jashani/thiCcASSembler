@@ -42,6 +42,12 @@ bool process_line(char *line, int current_line) {
     else if (g_error != NO_ERRORS) {
         return false;
     }
+
+    if (check_for_directive(line)) {
+
+    }
+
+
 }
 
 bool check_for_label(char *line, char **label) {
@@ -86,6 +92,45 @@ bool check_for_label(char *line, char **label) {
     }
 
     return true;
+}
+
+bool check_for_directive(char *line) {
+    if (*line != '.') {  /* Directives must start with a period! */
+        return false;
+    }
+
+    if (match_word(line, "data", 4)) {
+
+    }
+    else if (match_word(line, "string", 6)) {
+
+    }
+    else if (match_word(line, "entry", 5)) {
+
+    }
+    else if (match_word(line, "extern", 6)) {
+        
+    }
+}
+
+/* Return true if the first word in a line matches provided word, otherwise false. */
+bool match_word(char *line, char *word, int word_length) {
+    int real_length = 0;
+    
+    if (!strncmp(line, word, word_length)) {
+        return false;
+    }
+
+    while (!isspace(*line) && *line != '\0') {
+        real_length++;
+        line++;
+    }
+
+    if (real_length == word_length) {
+        return true;
+    }
+    
+    return false;
 }
 
 char* trim(char *line) {
