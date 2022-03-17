@@ -25,6 +25,7 @@ bool process_line(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH];
     bool has_label = false;
     directive directive_type;
+    int instruction_index;
     
     line = trim(line);
     if (line == NULL) {
@@ -46,6 +47,13 @@ bool process_line(char *line, int current_line) {
 
     if (check_for_directive(line, &directive_type)) {
         handle_directive(line, directive_type, has_label);
+    }
+    else if (g_error != NO_ERRORS) {
+        return false;
+    }
+
+    if (check_for_instruction(line, &instruction_index)) {
+        handle_instruction(line, instruction_index);
     }
     else if (g_error != NO_ERRORS) {
         return false;
@@ -154,6 +162,23 @@ bool handle_directive(char *line, directive directive_type, bool has_label) {
     else if (directive_type == DIRECTIVE_EXTERNAL) {
 
     }
+}
+
+bool check_for_instruction(char *line, int *instruction_index) {
+    const int INSTRUCTION_LENGTH = 3;
+    int index;
+    for (index = 0; index < INSTRUCTION_COUNT; index++) {
+        if (match_word(line, instructions[index], INSTRUCTION_LENGTH)) {
+            *instruction_index = index;
+            return true;
+        }
+    }
+    g_error = ERROR_BAD_INSTRUCTION;
+    return false;
+}
+
+bool handle_instruction(char *line, int instruction_index) {
+    
 }
 
 /* Return true if the first word in a line matches provided word, otherwise false. */

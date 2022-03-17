@@ -26,5 +26,8 @@ void print_error(int current_line) {
         case ERROR_MISSING_ARGUMENTS:
             printf("Arguments expcted but none given.\n");
             break;
+        case ERROR_BAD_INSTRUCTION:
+            printf("Unrecognised instruction.\n");
+            break;
     }
 }

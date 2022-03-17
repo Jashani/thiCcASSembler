@@ -10,6 +10,7 @@ typedef enum error_types {
     ERROR_BAD_LABEL,
     ERROR_RESERVED_KEYWORD,
     ERROR_BAD_DIRECTIVE,
+    ERROR_BAD_INSTRUCTION,
     ERROR_MISSING_ARGUMENTS,
 } error_type;
 
