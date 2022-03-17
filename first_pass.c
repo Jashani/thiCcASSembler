@@ -24,6 +24,7 @@ bool first_pass(FILE *file) {
 bool process_line(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH];
     bool has_label = false;
+    directive directive_type;
     
     line = trim(line);
     if (line == NULL) {
@@ -43,11 +44,12 @@ bool process_line(char *line, int current_line) {
         return false;
     }
 
-    if (check_for_directive(line)) {
-
+    if (check_for_directive(line, &directive_type)) {
+        handle_directive(line, directive_type, has_label);
     }
-
-
+    else if (g_error != NO_ERRORS) {
+        return false;
+    }
 }
 
 bool check_for_label(char *line, char **label) {
@@ -94,22 +96,63 @@ bool check_for_label(char *line, char **label) {
     return true;
 }
 
-bool check_for_directive(char *line) {
+bool check_for_directive(char *line, int *directive_to_set) {
     if (*line != '.') {  /* Directives must start with a period! */
         return false;
     }
 
     if (match_word(line, "data", 4)) {
-
+        *directive_to_set = DIRECTIVE_DATA;
+        return true;
+    }
+    else if (match_word(line, "struct", 6)) {
+        *directive_to_set = DIRECTIVE_STRUCT;
+        return true;
     }
     else if (match_word(line, "string", 6)) {
-
+        *directive_to_set = DIRECTIVE_STRING;
+        return true;
     }
     else if (match_word(line, "entry", 5)) {
-
+        *directive_to_set = DIRECTIVE_ENTRY;
+        return true;
     }
     else if (match_word(line, "extern", 6)) {
-        
+        *directive_to_set = DIRECTIVE_EXTERNAL;
+        return true;
+    }
+
+    g_error = ERROR_BAD_DIRECTIVE;
+    return false;
+}
+
+bool handle_directive(char *line, directive directive_type, bool has_label) {
+    char *current_field = line;
+
+    current_field = next_field(current_field);
+    if (current_field == NULL) {
+        g_error = ERROR_MISSING_ARGUMENTS;
+        return false;
+    }
+
+    if (directive_type == DIRECTIVE_DATA) {
+
+    }
+
+    else if (directive_type == DIRECTIVE_STRUCT) {
+
+    }
+    
+    else if (directive_type == DIRECTIVE_STRING) {
+
+    }
+
+    else if (directive_type == DIRECTIVE_ENTRY) {
+
+    }
+
+    else if (directive_type == DIRECTIVE_EXTERNAL) {
+
     }
 }
 
@@ -131,6 +174,19 @@ bool match_word(char *line, char *word, int word_length) {
     }
     
     return false;
+}
+
+char* next_field(char *line) {
+    if (line == NULL)
+        return NULL;
+    while (!(isspace(*line)) && *line != '\0') {
+        line++;
+    }
+    line = trim(line);
+    if (line == '\0') {
+        return NULL;
+    }
+    return line;
 }
 
 char* trim(char *line) {

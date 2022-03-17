@@ -20,5 +20,11 @@ void print_error(int current_line) {
         case ERROR_RESERVED_KEYWORD:
             printf("Usage of reserved keywords for other purposes is not allowed.\n");
             break;
+        case ERROR_BAD_DIRECTIVE:
+            printf("Unrecognised directive.\n");
+            break;
+        case ERROR_MISSING_ARGUMENTS:
+            printf("Arguments expcted but none given.\n");
+            break;
     }
 }

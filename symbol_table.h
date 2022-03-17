@@ -1,4 +1,12 @@
 
+typedef enum directive {
+    DIRECTIVE_DATA,
+    DIRECTIVE_STRUCT,
+    DIRECTIVE_STRING,
+    DIRECTIVE_ENTRY,
+    DIRECTIVE_EXTERNAL
+} directive;
+
 typedef enum attribute {
     ATTRIBUTE_CODE,
     ATTRIBUTE_ENTRY,

@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "common.h"
 #include "errors.h"
+#include "symbol_table.h"
 
 bool first_pass(FILE *file);
 bool should_process_line(char *line, int current_line);
