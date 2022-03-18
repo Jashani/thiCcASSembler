@@ -1,5 +1,10 @@
 #include "first_pass.h"
 
+char *instructions[] = {"mov", "cmp", "add", "sub", "not", "clr", "lea", "inc",
+                        "dec", "jmp", "bne", "get", "prn", "jsr", "rts", "hlt"};
+
+char *registers[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
+
 bool first_pass(FILE *file) {
     char line[MAX_LINE_LENGTH];
     int current_line = 1;
@@ -10,11 +15,16 @@ bool first_pass(FILE *file) {
 
     while(fgets(line, MAX_LINE_LENGTH, file) != NULL) {
         g_error = NO_ERRORS;
-        if (!should_process_line(line, current_line)) {
+        printf("\n--- Line %d ---\n", current_line);
+        if (should_process_line(line, current_line)) {
+            printf("Processing line %d\n", current_line);
             success = process_line(line, current_line);
             if (!success) {
                 print_error(current_line);
             }
+        }
+        else {
+            printf("Skipping line %d\n", current_line);
         }
 
         current_line++;
@@ -22,7 +32,7 @@ bool first_pass(FILE *file) {
 }
 
 bool process_line(char *line, int current_line) {
-    char label[MAX_LABEL_LENGTH];
+    char label[MAX_LABEL_LENGTH] = "\0";
     bool has_label = false;
     directive directive_type;
     int instruction_index;
@@ -38,37 +48,43 @@ bool process_line(char *line, int current_line) {
         return false;
     }
 
-    if (check_for_label(line, &label)) {
-        has_label = true;
+    printf("Checking for label\n");
+    if (check_for_label(line, label)) {
+        line = next_field(line);
     }
     else if (g_error != NO_ERRORS) {
         return false;
     }
 
+    printf("Checking for directive\n");
     if (check_for_directive(line, &directive_type)) {
-        handle_directive(line, directive_type, has_label);
+        handle_directive(line, directive_type, label);
+        return true;
     }
     else if (g_error != NO_ERRORS) {
         return false;
     }
 
+    printf("Checking for instruction\n");
     if (check_for_instruction(line, &instruction_index)) {
-        handle_instruction(line, instruction_index);
+        handle_instruction(line, instruction_index, label);
+        return true;
     }
-    else if (g_error != NO_ERRORS) {
+    else {
+        g_error = ERROR_BAD_INSTRUCTION;
         return false;
     }
 }
 
-bool check_for_label(char *line, char **label) {
+bool check_for_label(char *line, char *label) {
     int index;
     int label_iterator = 0;
     while (*line != ':' && !isspace(*line) && *line != '\0' && label_iterator < MAX_LABEL_LENGTH) {
-        *label[label_iterator] = *line;
+        label[label_iterator] = *line;
         label_iterator++;
         line++;
     }
-    *label[label_iterator] = '\0';
+    label[label_iterator] = '\0';
 
     while (*line != ':' && !isspace(*line) && *line != '\0') {  /* Push until the end of first field to determine potential issues */
         label_iterator++;
@@ -84,19 +100,19 @@ bool check_for_label(char *line, char **label) {
         return false;
     }
 
-    if (!isalpha(*label[0])) {  /* Label start must be alphabetical */
+    if (!isalpha(label[0])) {  /* Label start must be alphabetical */
         g_error = ERROR_BAD_LABEL;
         return false;
     }
 
     for (index = 1; index < label_iterator; index++) {  /* Ensure proper format */
-        if (!isalpha(*label[index]) && !isdigit(*label[index])) {
+        if (!isalpha(label[index]) && !isdigit(label[index])) {
             g_error = ERROR_BAD_LABEL;
             return false;
         }
     }
 
-    if (is_instruction(*label) || is_directive(*label) || is_register(*label)) {
+    if (is_instruction(label) || is_directive(label) || is_register(label)) {
         g_error = ERROR_RESERVED_KEYWORD;
         return false;
     }
@@ -104,11 +120,12 @@ bool check_for_label(char *line, char **label) {
     return true;
 }
 
-bool check_for_directive(char *line, int *directive_to_set) {
+bool check_for_directive(char *line, directive *directive_to_set) {
     if (*line != '.') {  /* Directives must start with a period! */
         return false;
     }
 
+    line++;
     if (match_word(line, "data", 4)) {
         *directive_to_set = DIRECTIVE_DATA;
         return true;
@@ -134,7 +151,7 @@ bool check_for_directive(char *line, int *directive_to_set) {
     return false;
 }
 
-bool handle_directive(char *line, directive directive_type, bool has_label) {
+bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
 
     current_field = next_field(current_field);
@@ -144,23 +161,28 @@ bool handle_directive(char *line, directive directive_type, bool has_label) {
     }
 
     if (directive_type == DIRECTIVE_DATA) {
-
+        printf("Directive is data\n");
+        return true;
     }
 
     else if (directive_type == DIRECTIVE_STRUCT) {
-
+        printf("Directive is struct\n");
+        return true;
     }
     
     else if (directive_type == DIRECTIVE_STRING) {
-
+        printf("Directive is str\n");
+        return true;
     }
 
     else if (directive_type == DIRECTIVE_ENTRY) {
-
+        printf("Directive is ent\n");
+        return true;
     }
 
     else if (directive_type == DIRECTIVE_EXTERNAL) {
-
+        printf("Directive is ext\n");
+        return true;
     }
 }
 
@@ -173,19 +195,49 @@ bool check_for_instruction(char *line, int *instruction_index) {
             return true;
         }
     }
-    g_error = ERROR_BAD_INSTRUCTION;
     return false;
 }
 
-bool handle_instruction(char *line, int instruction_index) {
-    
+bool handle_instruction(char *line, int instruction_index, char *label) {
+    printf("handling instruction\n");
+    return true;
+}
+
+bool is_instruction(char *term) {
+    int placeholder;
+    return check_for_instruction(term, &placeholder);
+}
+
+bool is_directive(char *term) {
+    bool result;
+    directive placeholder;
+    char *term_with_period = concatenate(".", term);
+    result = check_for_directive(term_with_period, &placeholder);
+    if (g_error == ERROR_BAD_DIRECTIVE) { 
+        g_error = NO_ERRORS;  /* Unset bad directive since we're just looking for the term */
+    }
+    free(term_with_period);
+    return result;
+}
+
+bool is_register(char *term) {
+    const int REGISTER_LENGTH = 2;
+    int index;
+    for (index = 0; index < REGISTER_COUNT; index++) {
+        if (match_word(term, instructions[index], REGISTER_LENGTH)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /* Return true if the first word in a line matches provided word, otherwise false. */
 bool match_word(char *line, char *word, int word_length) {
     int real_length = 0;
     
-    if (!strncmp(line, word, word_length)) {
+    /* printf("Matching word '%s' to word '%s'\n", line, word); */
+
+    if (strncmp(line, word, word_length) != 0) {
         return false;
     }
 
@@ -208,7 +260,7 @@ char* next_field(char *line) {
         line++;
     }
     line = trim(line);
-    if (line == '\0') {
+    if (*line == '\0') {
         return NULL;
     }
     return line;
@@ -225,19 +277,18 @@ char* trim(char *line) {
 }
 
 bool should_process_line(char *line, int current_line) {
+    line = trim(line);
     if (line == NULL) {  /* Fake line :( */
         return false;
     }
-    while (isspace(*line)) {  /* Skip white characters */
-        line++;
-        if (*line == ';' || *line == '\0') {  /* If comment or line's over */
-            return false;
-        }
-        if (strlen(line) > MAX_LINE_LENGTH - 2) {
-            g_error = ERROR_LINE_TOO_LONG;
-            print_error(current_line);
-            return false;
-        }
+    printf("Line %d is:\n\t%s\n", current_line, line);
+    if (*line == ';' || *line == '\0') {  /* If comment or line's over */
+        return false;
+    }
+    if (strlen(line) > MAX_LINE_LENGTH - 2) {
+        g_error = ERROR_LINE_TOO_LONG;
+        print_error(current_line);
+        return false;
     }
     return true;
 }
