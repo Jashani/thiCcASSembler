@@ -3,7 +3,7 @@
 
 typedef struct macro {
     char *name;
-    char **content;
+    char *content;
 } macro;
 
 typedef struct macro_node {

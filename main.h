@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "common.h"
+#include "pre_assembly.h"
 #include "first_pass.h"
 
 #ifndef MAIN_H

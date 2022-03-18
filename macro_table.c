@@ -3,7 +3,7 @@
 
 macro_list macros = NULL;
 
-void add_macro(char *name, char **content) {
+void add_macro(char *name, char *content) {
     struct macro data;
     struct macro_node *new_node = (struct macro_node *)malloc(sizeof(struct macro_node));
     struct macro_node *current_node;
