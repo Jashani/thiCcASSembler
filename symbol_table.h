@@ -1,4 +1,7 @@
 
+#ifndef SYMBOL_TABLE_H
+#define SYMBOL_TABLE_H
+
 typedef enum directive {
     DIRECTIVE_DATA,
     DIRECTIVE_STRUCT,
@@ -23,8 +26,10 @@ typedef struct symbol {
 } symbol;
 
 typedef struct symbol_node {
-    symbol_node *next;
+    struct symbol_node *next;
     symbol data;
 } symbol_node;
 
 typedef symbol_node* symbol_list;
+
+#endif

@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "common.h"
 
+#ifndef PRE_ASSEMBLY_H
+#define PRE_ASSEMBLY_H
+
 /**
  * @brief Perform pre-assembly algorithm
  * 
@@ -10,17 +13,13 @@
 bool pre_assembly(FILE *original_file);
 
 /**
- * @brief Replace macro call with macro content
- * 
- * @param file 
- * @return bool success 
- */
-bool expand_macro(FILE *file, macro);
-
-/**
  * @brief Delete the line currently read in the file
  * 
  * @param file 
  * @return bool success
  */
 bool delete_current_line(FILE *file);
+
+bool extract_first_word(char *line, char *result);
+
+#endif

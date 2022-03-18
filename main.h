@@ -2,6 +2,9 @@
 #include "common.h"
 #include "first_pass.h"
 
+#ifndef MAIN_H
+#define MAIN_H
+
 int main(int argc, char *argv[]);
 
 /**
@@ -22,3 +25,5 @@ void assemblify_paths(int path_count, char *file_names[], char *paths[]);
 bool process_file(char *path);
 
 bool create_output_files();
+
+#endif

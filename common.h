@@ -3,6 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifndef COMMON_H
+#define COMMON_H
+
 #define MAX_LINE_LENGTH 80 + 1 + 1  /* Line length + \n + \0 */
 #define MAX_LABEL_LENGTH 31
 #define SUCCESS 0
@@ -13,3 +16,5 @@ typedef int bool;
 
 char* concatenate(char *start, char *end);
 void* safe_malloc(long size);
+
+#endif
