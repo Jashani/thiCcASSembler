@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "common.h"
+#include "macro_table.h"
 
 #ifndef PRE_ASSEMBLY_H
 #define PRE_ASSEMBLY_H

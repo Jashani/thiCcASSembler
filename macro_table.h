@@ -13,4 +13,8 @@ typedef struct macro_node {
 
 typedef macro_node* macro_list;
 
+void add_macro(char *name, char *content);
+bool macro_exists(char *name);
+char* get_macro(char *name);
+
 #endif

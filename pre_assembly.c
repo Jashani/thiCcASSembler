@@ -2,7 +2,7 @@
 
 bool pre_assembly(FILE *original_file) {
     char line[MAX_LINE_LENGTH];
-    char current_macro_name[MAX_LABEL_LENGTH];
+    char current_name[MAX_LABEL_LENGTH];
     char *current_content = "";
     bool is_macro = false;
 
@@ -13,8 +13,7 @@ bool pre_assembly(FILE *original_file) {
             if (match_word(line, "endm")) {
                 is_macro = false;
                 /* delete line from file*/
-                /* add to macro table */
-                printf("Current content at the end of macro: %s\n", current_content);
+                add_macro(current_name, current_content);
                 current_content = "";
                 continue;
             }

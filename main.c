@@ -15,6 +15,7 @@ bool process_file(char *path) {
         return false;
     }
 
+    pre_assembly(file);
     first_pass(file);
 
     free(path);

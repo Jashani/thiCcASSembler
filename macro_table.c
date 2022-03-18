@@ -36,7 +36,7 @@ bool macro_exists(char *name) {
     return false;
 }
 
-char** get_macro(char *name) {
+char* get_macro(char *name) {
     struct macro_node *current_node = macros;
     while (current_node != NULL) {
         if (strcmp(name, current_node->data.name) == 0) {
