@@ -1,3 +1,5 @@
+#ifndef MACRO_TABLE_H
+#define MACRO_TABLE_H
 
 typedef struct macro {
     char *name;
@@ -5,9 +7,10 @@ typedef struct macro {
 } macro;
 
 typedef struct macro_node {
-    macro_node *next;
+    struct macro_node *next;
     macro data;
 } macro_node;
 
 typedef macro_node* macro_list;
 
+#endif

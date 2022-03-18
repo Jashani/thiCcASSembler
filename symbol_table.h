@@ -20,8 +20,8 @@ typedef enum attribute {
 typedef struct symbol {
     char *identifier;
     int value;
-    unsigned int base_address;
-    unsigned int offset;
+    int base_address;
+    int offset;
     attribute *attributes;
 } symbol;
 

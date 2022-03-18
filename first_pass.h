@@ -3,6 +3,7 @@
 #include "common.h"
 #include "errors.h"
 #include "symbol_table.h"
+#include "macro_table.h"
 
 #ifndef FIRST_PASS_H
 #define FIRST_PASS_H
