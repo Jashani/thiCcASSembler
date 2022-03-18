@@ -24,7 +24,6 @@ bool is_instruction(char *term);
 bool is_directive(char *term);
 bool is_register(char *term);
 
-bool match_word(char *line, char *word, int word_length);
 char *next_field(char *line);
 char *trim(char *line);
 

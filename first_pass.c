@@ -33,7 +33,6 @@ bool first_pass(FILE *file) {
 
 bool process_line(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH] = "\0";
-    bool has_label = false;
     directive directive_type;
     int instruction_index;
     
@@ -51,6 +50,7 @@ bool process_line(char *line, int current_line) {
     printf("Checking for label\n");
     if (check_for_label(line, label)) {
         line = next_field(line);
+        printf("Label is: %s\n", label);
     }
     else if (g_error != NO_ERRORS) {
         return false;
@@ -126,23 +126,23 @@ bool check_for_directive(char *line, directive *directive_to_set) {
     }
 
     line++;
-    if (match_word(line, "data", 4)) {
+    if (match_word(line, "data")) {
         *directive_to_set = DIRECTIVE_DATA;
         return true;
     }
-    else if (match_word(line, "struct", 6)) {
+    else if (match_word(line, "struct")) {
         *directive_to_set = DIRECTIVE_STRUCT;
         return true;
     }
-    else if (match_word(line, "string", 6)) {
+    else if (match_word(line, "string")) {
         *directive_to_set = DIRECTIVE_STRING;
         return true;
     }
-    else if (match_word(line, "entry", 5)) {
+    else if (match_word(line, "entry")) {
         *directive_to_set = DIRECTIVE_ENTRY;
         return true;
     }
-    else if (match_word(line, "extern", 6)) {
+    else if (match_word(line, "extern")) {
         *directive_to_set = DIRECTIVE_EXTERNAL;
         return true;
     }
@@ -187,10 +187,9 @@ bool handle_directive(char *line, directive directive_type, char *label) {
 }
 
 bool check_for_instruction(char *line, int *instruction_index) {
-    const int INSTRUCTION_LENGTH = 3;
     int index;
     for (index = 0; index < INSTRUCTION_COUNT; index++) {
-        if (match_word(line, instructions[index], INSTRUCTION_LENGTH)) {
+        if (match_word(line, instructions[index])) {
             *instruction_index = index;
             return true;
         }
@@ -221,35 +220,12 @@ bool is_directive(char *term) {
 }
 
 bool is_register(char *term) {
-    const int REGISTER_LENGTH = 2;
     int index;
     for (index = 0; index < REGISTER_COUNT; index++) {
-        if (match_word(term, instructions[index], REGISTER_LENGTH)) {
+        if (match_word(term, instructions[index])) {
             return true;
         }
     }
-    return false;
-}
-
-/* Return true if the first word in a line matches provided word, otherwise false. */
-bool match_word(char *line, char *word, int word_length) {
-    int real_length = 0;
-    
-    /* printf("Matching word '%s' to word '%s'\n", line, word); */
-
-    if (strncmp(line, word, word_length) != 0) {
-        return false;
-    }
-
-    while (!isspace(*line) && *line != '\0') {
-        real_length++;
-        line++;
-    }
-
-    if (real_length == word_length) {
-        return true;
-    }
-    
     return false;
 }
 

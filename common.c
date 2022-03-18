@@ -16,3 +16,17 @@ void *safe_malloc(long size) {
     }
     return pointer;
 }
+
+bool extract_first_word(char *line, char *result) {
+    sscanf(line, "%s", result);
+}
+
+/* Return true if the first word in a line matches provided word, otherwise false. */
+bool match_word(char *line, char *word) {
+    char first_word[MAX_LINE_LENGTH];
+    extract_first_word(line, first_word);
+    if (strcmp(first_word, word) == 0) {
+        return true;
+    }
+    return false;
+}

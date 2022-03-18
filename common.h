@@ -16,5 +16,6 @@ typedef int bool;
 
 char* concatenate(char *start, char *end);
 void* safe_malloc(long size);
+bool match_word(char *line, char *word);
 
 #endif
