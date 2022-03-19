@@ -11,7 +11,7 @@
  * @param original_file file to run pre-assembly on
  * @return bool success
  */
-bool pre_assembly(FILE *original_file);
+bool pre_assembly(FILE *source_file, FILE *expanded_source_file);
 
 /**
  * @brief Delete the line currently read in the file
@@ -20,7 +20,5 @@ bool pre_assembly(FILE *original_file);
  * @return bool success
  */
 bool delete_current_line(FILE *file);
-
-bool extract_first_word(char *line, char *result);
 
 #endif

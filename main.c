@@ -1,38 +1,40 @@
 #include "main.h"
 
-void assemblify_paths(int path_count, char *file_names[], char *paths[]) {
-    int index;
-    for (index = 0; index < path_count; index++) {
-        paths[index] = concatenate(file_names[index], ".as");
-    }
+char* assembly_path(char *file_name) {
+    return concatenate(file_name, ".as");
+}
+
+char* expanded_assembly_path(char *file_name) {
+    return concatenate(file_name, ".am");
 }
 
 bool process_file(char *path) {
-    FILE *file = fopen(path, "r");
-    if (file == NULL) {
+    FILE *source_file, *expanded_source_file;
+
+    source_file = fopen(assembly_path(path), "r");
+    if (source_file == NULL) {
         printf("Failed to open file: %s. Skipping.\n", path);
         free(path);
         return false;
     }
 
-    pre_assembly(file);
-    first_pass(file);
+    expanded_source_file = fopen(expanded_assembly_path(path), "w");
+    pre_assembly(source_file, expanded_source_file);
+    fclose(expanded_source_file);
+    expanded_source_file = fopen(expanded_assembly_path(path), "r");
+    first_pass(expanded_source_file);
 
-    free(path);
     return true;
 }
 
 int main(int argc, char *argv[]) {
     int index;
-    int path_count = argc - 1;
+    int file_count = argc - 1;
     char **file_names = argv + 1;
-    char **paths = (char **) safe_malloc(path_count * sizeof(char *));
 
-    assemblify_paths(path_count, file_names, paths);
-    for (index = 0; index < path_count; index++) {
-        process_file(paths[index]);
+    for (index = 0; index < file_count; index++) {
+        process_file(file_names[index]);
     }
 
-    free(paths);
     return SUCCESS;
 }
