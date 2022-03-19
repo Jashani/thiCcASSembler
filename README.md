@@ -54,7 +54,7 @@ for line in source_code:
         add macro name to macro table
         continue
     if is_macro:
-        if line is "endm":
+        if line is "endmacro":
             delete line
             is_macro = False
         else:

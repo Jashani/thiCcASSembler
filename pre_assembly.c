@@ -17,7 +17,7 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
         }
 
         if (is_macro) {
-            if (match_word(line, "endm")) {
+            if (match_word(line, "endmacro")) {
                 is_macro = false;
                 add_macro(current_name, current_content);
                 current_content = "";
