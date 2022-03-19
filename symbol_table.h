@@ -32,4 +32,8 @@ typedef struct symbol_node {
 
 typedef symbol_node* symbol_list;
 
+void add_symbol(char *identifier, int value, int base_address, int offset, attribute *attributes);
+bool symbol_exists(char *identifier);
+void clear_symbols();
+
 #endif

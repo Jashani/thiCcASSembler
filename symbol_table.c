@@ -5,10 +5,10 @@ symbol_list symbols = NULL;
 
 void add_symbol(char *identifier, int value, int base_address, int offset, attribute *attributes) {
     struct symbol data;
-    struct symbol_node *new_node = (struct symbol_node *) malloc(sizeof(struct symbol_node));
+    struct symbol_node *new_node = (struct symbol_node *) safe_malloc(sizeof(struct symbol_node));
     struct symbol_node *current_node;
 
-    data.identifier = identifier;
+    data.identifier = strdup(identifier);
     data.value = value;
     data.base_address = base_address;
     data.offset = offset;
@@ -31,10 +31,20 @@ void add_symbol(char *identifier, int value, int base_address, int offset, attri
 bool symbol_exists(char *identifier) {
     struct symbol_node *current_node = symbols;
     while (current_node != NULL) {
-        if (!strcmp(identifier, current_node->data.identifier)) {
+        if (strings_match(identifier, current_node->data.identifier)) {
             return true;
         }
         current_node = current_node->next;
     }
     return false;
+}
+
+void clear_symbols() { /* This needs to be redone properly */
+    struct symbol_node *current_node, *next_node;
+    current_node = symbols;
+    while (current_node != NULL) {
+        next_node = current_node->next;
+        free(current_node);
+        current_node = next_node;
+    }
 }
