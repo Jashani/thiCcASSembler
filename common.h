@@ -16,6 +16,10 @@ typedef int bool;
 
 char* concatenate(char *start, char *end);
 void* safe_malloc(long size);
+void extract_first_word(char *line, char *result);
 bool match_word(char *line, char *word);
+char *next_field(char *line);
+char *trim(char *line);
+bool strings_match(char *first, char *second);
 
 #endif

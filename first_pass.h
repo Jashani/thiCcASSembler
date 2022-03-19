@@ -24,9 +24,6 @@ bool is_instruction(char *term);
 bool is_directive(char *term);
 bool is_register(char *term);
 
-char *next_field(char *line);
-char *trim(char *line);
-
 bool handle_data_line(FILE *file, int *data_counter);
 bool handle_external_line(FILE *file);
 bool handle_instruction_line(FILE *file, int *instruction_counter);

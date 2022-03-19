@@ -17,7 +17,7 @@ void *safe_malloc(long size) {
     return pointer;
 }
 
-bool extract_first_word(char *line, char *result) {
+void extract_first_word(char *line, char *result) {
     sscanf(line, "%s", result);
 }
 
@@ -25,8 +25,52 @@ bool extract_first_word(char *line, char *result) {
 bool match_word(char *line, char *word) {
     char first_word[MAX_LINE_LENGTH];
     extract_first_word(line, first_word);
-    if (strcmp(first_word, word) == 0) {
+    if (strings_match(first_word, word)) {
         return true;
     }
     return false;
+}
+
+char* next_field(char *line) {
+    if (line == NULL)
+        return NULL;
+    while (!(isspace(*line)) && *line != '\0') {
+        line++;
+    }
+
+    line = trim(line);
+    if (*line == '\0') {
+        return NULL;
+    }
+    return line;
+}
+
+char* trim(char *line) {
+    if (line == NULL || strlen(line) <= 1) {
+        return NULL;
+    }
+    while (isspace(*line)) {
+        line++;
+    }
+    return line;
+}
+
+bool strings_match(char *first, char *second) {
+    char temp;
+    if (first == NULL || second == NULL) {
+        return false;
+    }
+
+    do {
+        temp = *first;
+        if (temp == '\n') {
+            temp = '\0';
+        }
+        if (temp != *second) {
+            return false;
+        }
+        first++;
+        second++;
+    } while (temp);
+    return true;
 }

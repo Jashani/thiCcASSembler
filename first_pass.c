@@ -229,29 +229,6 @@ bool is_register(char *term) {
     return false;
 }
 
-char* next_field(char *line) {
-    if (line == NULL)
-        return NULL;
-    while (!(isspace(*line)) && *line != '\0') {
-        line++;
-    }
-    line = trim(line);
-    if (*line == '\0') {
-        return NULL;
-    }
-    return line;
-}
-
-char* trim(char *line) {
-    if (line == NULL || strlen(line) <= 1) {
-        return NULL;
-    }
-    while (isspace(*line)) {
-        line++;
-    }
-    return line;
-}
-
 bool should_process_line(char *line, int current_line) {
     line = trim(line);
     if (line == NULL) {  /* Fake line :( */
