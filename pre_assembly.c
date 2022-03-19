@@ -12,7 +12,7 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
         /* if first word is macro found in macro table, expand it and continue */
         extract_first_word(line, potential_macro);
         if (macro_exists(potential_macro)) {
-            fprintf(expanded_source_file, "%s", get_macro(line));
+            fprintf(expanded_source_file, "%s", get_macro(potential_macro));
             continue;
         }
 
@@ -29,7 +29,7 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
 
         else if (match_word(line, "macro")) {
             is_macro = true;
-            untrimmed_name = next_field(line);
+            untrimmed_name = next_field(trim(line));
             extract_first_word(untrimmed_name, current_name);
             continue;
         }
