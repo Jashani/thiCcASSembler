@@ -1,10 +1,11 @@
 #include "errors.h"
 
 void print_error(int current_line) {
-    printf("Line %d: ", current_line);
+    printf("Error on line %d: ", current_line);
     switch (g_error) {
         case ERROR_SYNTAX:
             printf("Syntax error.\n");
+            break;
         case ERROR_LINE_TOO_LONG:
             printf("Line too long (Max %d characters).\n", MAX_LINE_LENGTH);
             break;
@@ -28,6 +29,18 @@ void print_error(int current_line) {
             break;
         case ERROR_BAD_INSTRUCTION:
             printf("Unrecognised instruction.\n");
+            break;
+        case ERROR_SYMBOL_EXISTS:
+            printf("Symbol already exists.\n");
+            break;
+        case ERROR_MISSING_QUOTES:
+            printf("String directive must use double quotes (\").\n");
+            break;
+        case ERROR_EMPTY_STRING:
+            printf("String cannot be empty.\n");
+            break;
+        case ERROR_BAD_ARGUMENT:
+            printf("Bad argument.\n");
             break;
     }
 }
