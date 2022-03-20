@@ -1,14 +1,15 @@
 #include "main.h"
 
-char* assembly_path(char *file_name) {
-    return concatenate(file_name, ".as");
-}
+/* using without free causes mem leak */
+char *assembly_path(char *file_name) { return concatenate(file_name, ".as"); }
 
-char* expanded_assembly_path(char *file_name) {
+/* using without free causes mem leak */
+char *expanded_assembly_path(char *file_name) {
     return concatenate(file_name, ".am");
 }
 
 bool process_file(char *path) {
+    bool success;
     FILE *source_file, *expanded_source_file;
 
     source_file = fopen(assembly_path(path), "r");
@@ -19,10 +20,14 @@ bool process_file(char *path) {
     }
 
     expanded_source_file = fopen(expanded_assembly_path(path), "w");
-    pre_assembly(source_file, expanded_source_file);
+    success = pre_assembly(source_file, expanded_source_file);
     fclose(expanded_source_file);
+    if (!success) {
+        remove(expanded_assembly_path(path));
+        return false;
+    }
     expanded_source_file = fopen(expanded_assembly_path(path), "r");
-    first_pass(expanded_source_file);
+    /* first_pass(expanded_source_file); */
 
     return true;
 }
