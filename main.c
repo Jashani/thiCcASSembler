@@ -27,7 +27,7 @@ bool process_file(char *path) {
         return false;
     }
     expanded_source_file = fopen(expanded_assembly_path(path), "r");
-    /* first_pass(expanded_source_file); */
+    first_pass(expanded_source_file);
 
     return true;
 }

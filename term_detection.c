@@ -19,9 +19,6 @@ bool check_for_directive(char *line, directive *directive_to_set) {
     if (match_word(line, "data")) {
         *directive_to_set = DIRECTIVE_DATA;
         return true;
-    } else if (match_word(line, "struct")) {
-        *directive_to_set = DIRECTIVE_STRUCT;
-        return true;
     } else if (match_word(line, "string")) {
         *directive_to_set = DIRECTIVE_STRING;
         return true;

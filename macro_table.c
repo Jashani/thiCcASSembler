@@ -52,6 +52,7 @@ void print_macros() { /* Debug method */
     struct macro_node *current_node;
     current_node = macros;
     while (current_node != NULL) {
+        printf("Macro %s:\n%s", current_node->data.name, current_node->data.content);
         current_node = current_node->next;
     }
 }

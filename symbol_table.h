@@ -1,28 +1,32 @@
+#include "errors.h"
+#include "globals.h"
 
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
 typedef enum directive {
     DIRECTIVE_DATA,
-    DIRECTIVE_STRUCT,
     DIRECTIVE_STRING,
     DIRECTIVE_ENTRY,
     DIRECTIVE_EXTERNAL
 } directive;
 
 typedef enum attribute {
-    ATTRIBUTE_CODE,
-    ATTRIBUTE_ENTRY,
-    ATTRIBUTE_DATA,
-    ATTRIBUTE_EXTERNAL
+    ATTRIBUTE_NONE = 0,
+    ATTRIBUTE_CODE = 1,
+    ATTRIBUTE_ENTRY = 2,
+    ATTRIBUTE_DATA = 4,
+    ATTRIBUTE_EXTERNAL = 8
 } attribute;
+
+typedef int attribute_set;
 
 typedef struct symbol {
     char *identifier;
     int value;
     int base_address;
     int offset;
-    attribute *attributes;
+    attribute_set attributes;
 } symbol;
 
 typedef struct symbol_node {
@@ -32,8 +36,9 @@ typedef struct symbol_node {
 
 typedef symbol_node* symbol_list;
 
-void add_symbol(char *identifier, int value, int base_address, int offset, attribute *attributes);
+bool add_symbol(char *identifier, int value, int base_address, int offset, attribute_set attributes);
 bool symbol_exists(char *identifier);
 void clear_symbols();
+void print_symbols();
 
 #endif
