@@ -16,9 +16,7 @@ bool check_for_label(char *line, char *label);
 bool handle_instruction(char *line, int instruction_index, char *label);
 bool handle_directive(char *line, directive directive_type, char *label);
 
-bool handle_data_line(FILE *file, int *data_counter);
-bool handle_external_line(FILE *file);
-bool handle_instruction_line(FILE *file, int *instruction_counter);
-bool recalculate_symbol_values();
+bool handle_directive_data(char *line);
+bool handle_directive_string(char *line);
 
 #endif

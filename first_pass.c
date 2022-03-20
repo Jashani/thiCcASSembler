@@ -23,6 +23,9 @@ bool first_pass(FILE *file) {
 
         current_line++;
     }
+
+    printf("Data counter: %d\n", g_data_counter);
+    print_symbols();
 }
 
 bool process_line(char *line, int current_line) {
@@ -49,18 +52,16 @@ bool process_line(char *line, int current_line) {
         return false;
     }
 
-    printf("Checking for directive\n");
+    printf("Checking for directive.\n");
     if (check_for_directive(line, &directive_type)) {
-        handle_directive(line, directive_type, label);
-        return true;
+        return handle_directive(line, directive_type, label);
     } else if (g_error != NO_ERRORS) {
         return false;
     }
 
     printf("Checking for instruction\n");
     if (check_for_instruction(line, &instruction_index)) {
-        handle_instruction(line, instruction_index, label);
-        return true;
+        return handle_instruction(line, instruction_index, label);
     } else {
         g_error = ERROR_BAD_INSTRUCTION;
         return false;
@@ -70,16 +71,18 @@ bool process_line(char *line, int current_line) {
 bool check_for_label(char *line, char *label) {
     int index;
     int label_iterator = 0;
+    char temp_label[MAX_LABEL_LENGTH];
+
     while (*line != ':' && !isspace(*line) && *line != '\0' &&
            label_iterator < MAX_LABEL_LENGTH) {
-        label[label_iterator] = *line;
+        temp_label[label_iterator] = *line;
         label_iterator++;
         line++;
     }
-    label[label_iterator] = '\0';
+    temp_label[label_iterator] = '\0';
 
-    while (*line != ':' && !isspace(*line) && *line != '\0') { /* Push until the end of first field to determine
-                               potential issues */
+    /* Push until the end of first field to determine potential issues */
+    while (*line != ':' && !isspace(*line) && *line != '\0') {
         label_iterator++;
         line++;
     }
@@ -93,28 +96,33 @@ bool check_for_label(char *line, char *label) {
         return false;
     }
 
-    if (!isalpha(label[0])) { /* Label start must be alphabetical */
+    if (!isalpha(temp_label[0])) { /* Label start must be alphabetical */
         g_error = ERROR_BAD_LABEL;
         return false;
     }
 
     for (index = 1; index < label_iterator; index++) { /* Ensure proper format */
-        if (!isalpha(label[index]) && !isdigit(label[index])) {
+        if (!isalpha(temp_label[index]) && !isdigit(temp_label[index])) {
             g_error = ERROR_BAD_LABEL;
             return false;
         }
     }
 
-    if (is_instruction(label) || is_directive(label) || is_register(label)) {
+    if (is_instruction(temp_label) || is_directive(temp_label) ||
+        is_register(temp_label)) {
         g_error = ERROR_RESERVED_KEYWORD;
         return false;
     }
 
+    strcpy(label, temp_label);
     return true;
 }
 
 bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
+    attribute_set attributes = ATTRIBUTE_NONE;
+    bool has_label = (label[0] != '\0') ? true : false;
+    printf("Handling directive.\n");
 
     current_field = next_field(current_field);
     if (current_field == NULL) {
@@ -122,33 +130,140 @@ bool handle_directive(char *line, directive directive_type, char *label) {
         return false;
     }
 
-    if (directive_type == DIRECTIVE_DATA) {
-        printf("Directive is data\n");
-        return true;
+    if (has_label) {
+        if (directive_type == DIRECTIVE_DATA || directive_type == DIRECTIVE_STRING) {
+            attributes = ATTRIBUTE_DATA;
+        }
+        else if (directive_type == DIRECTIVE_EXTERNAL) {
+            attributes = ATTRIBUTE_EXTERNAL;
+        }
+        if (!add_symbol(label, 1, 1, 1, attributes)) { /* mock values */
+            return false;
+        }
     }
 
-    else if (directive_type == DIRECTIVE_STRUCT) {
-        printf("Directive is struct\n");
-        return true;
+    if (directive_type == DIRECTIVE_DATA) {
+        /* Add to symbol table with attribute 'data' */
+        /* Add to image */
+        /* Extend directive_counter */
+        printf("Directive is data\n");
+        return handle_directive_data(current_field);
     }
 
     else if (directive_type == DIRECTIVE_STRING) {
+        /* Add to symbol table with attribute 'data' */
+        /* Add to image */
+        /* Extend directive_counter */
         printf("Directive is str\n");
-        return true;
+        return handle_directive_string(current_field);
     }
 
     else if (directive_type == DIRECTIVE_ENTRY) {
+        /* Will be handled during second pass */
         printf("Directive is ent\n");
         return true;
     }
 
     else if (directive_type == DIRECTIVE_EXTERNAL) {
+        /* Add to symbol table with naught values and attribute 'external */
         printf("Directive is ext\n");
         return true;
     }
 }
 
+bool handle_directive_data(char *line) {
+    int temp_count = 0;
+    bool number_exists;
+
+    if (!isdigit(*line) && *line != '-' && *line != '+') {
+        g_error = ERROR_SYNTAX;
+        return false;
+    }
+
+    while (line != NULL && *line != '\0') {
+        number_exists = false;
+
+        if (*line == '-' || *line == '+') {
+            line++;
+        }
+
+        while (isdigit(*line)) {
+            number_exists = true;
+            line++;
+        }
+
+        if (!number_exists) {
+            g_error = ERROR_SYNTAX;
+            return false;
+        }
+
+        temp_count++;
+        line = trim(line);
+        if (line == NULL || *line == '\0') {
+            break;
+        }
+
+        if (*line != ',' || *(trim(line + 1)) == '\0') {
+            g_error = ERROR_SYNTAX;
+            return false;
+        }
+
+        line++;
+        line = trim(line);
+    }
+
+    g_data_counter += temp_count;
+    return true;
+}
+
+bool handle_directive_string(char *line) {
+    int temp_count = 0;
+    
+    if (*line != '"') {
+        g_error = ERROR_MISSING_QUOTES;
+        return false;
+    }
+
+    line++;
+    if (*line == '"') {
+        g_error = ERROR_EMPTY_STRING;
+        return false;
+    }
+
+    while (line != NULL && *line != '"' && *line != '\0') {
+        line++;
+        temp_count++;
+        /* Extend data image */
+    }
+
+    temp_count++; /* For terminating character */
+    if (line == NULL || *line == '\0') {
+        g_error = ERROR_MISSING_QUOTES;
+        return false;
+    }
+
+    line++;
+    line = trim(line);
+    if (line != NULL && *line != '\0') {
+        g_error = ERROR_SYNTAX;
+        return false;
+    }
+
+    g_data_counter += temp_count;
+    return true;
+}
+
 bool handle_instruction(char *line, int instruction_index, char *label) {
+    attribute_set attributes = ATTRIBUTE_NONE;
+    bool has_label = (label[0] != '\0') ? true : false;
+
+    if (has_label) {
+        attributes = ATTRIBUTE_CODE;
+        if (!add_symbol(label, 1, 1, 1, attributes)) { /* mock values */
+            return false;
+        }
+    }
+
     printf("handling instruction\n");
     return true;
 }
@@ -158,7 +273,7 @@ bool should_process_line(char *line, int current_line) {
     if (line == NULL) { /* Fake line :( */
         return false;
     }
-    printf("Line %d is:\n\t%s\n", current_line, line);
+    printf("Line %d is:\n|\t%s\n", current_line, line);
     if (*line == ';' || *line == '\0') { /* If comment or line's over */
         return false;
     }
