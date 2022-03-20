@@ -42,5 +42,8 @@ void print_error(int current_line) {
         case ERROR_BAD_ARGUMENT:
             printf("Bad argument.\n");
             break;
+        case ERROR_CANNOT_LABEL_DIRECTIVE:
+            printf("May only label '.data' and '.string' directives.\n");
+            break;
     }
 }

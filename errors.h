@@ -18,7 +18,8 @@ typedef enum error_types {
     ERROR_SYMBOL_EXISTS,
     ERROR_MISSING_QUOTES,
     ERROR_EMPTY_STRING,
-    ERROR_BAD_ARGUMENT
+    ERROR_BAD_ARGUMENT,
+    ERROR_CANNOT_LABEL_DIRECTIVE
 } error_type;
 
 void print_error(int current_line);

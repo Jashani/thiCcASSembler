@@ -108,8 +108,7 @@ bool check_for_label(char *line, char *label) {
         }
     }
 
-    if (is_instruction(temp_label) || is_directive(temp_label) ||
-        is_register(temp_label)) {
+    if (is_reserved(temp_label)) {
         g_error = ERROR_RESERVED_KEYWORD;
         return false;
     }
@@ -120,7 +119,6 @@ bool check_for_label(char *line, char *label) {
 
 bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
-    attribute_set attributes = ATTRIBUTE_NONE;
     bool has_label = (label[0] != '\0') ? true : false;
     printf("Handling directive.\n");
 
@@ -131,13 +129,11 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     }
 
     if (has_label) {
-        if (directive_type == DIRECTIVE_DATA || directive_type == DIRECTIVE_STRING) {
-            attributes = ATTRIBUTE_DATA;
+        if (directive_type != DIRECTIVE_DATA && directive_type != DIRECTIVE_STRING) {
+            g_error = ERROR_CANNOT_LABEL_DIRECTIVE;
+            return false;
         }
-        else if (directive_type == DIRECTIVE_EXTERNAL) {
-            attributes = ATTRIBUTE_EXTERNAL;
-        }
-        if (!add_symbol(label, 1, 1, 1, attributes)) { /* mock values */
+        if (!add_symbol(label, 1, 1, 1, ATTRIBUTE_DATA)) { /* mock values */
             return false;
         }
     }
@@ -167,6 +163,7 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     else if (directive_type == DIRECTIVE_EXTERNAL) {
         /* Add to symbol table with naught values and attribute 'external */
         printf("Directive is ext\n");
+        handle_directive_extern(current_field);
         return true;
     }
 }
@@ -251,6 +248,17 @@ bool handle_directive_string(char *line) {
 
     g_data_counter += temp_count;
     return true;
+}
+
+bool handle_directive_extern(char *line) {
+    char label[MAX_LABEL_LENGTH];
+    extract_first_word(line, label);
+    if (is_reserved(line)) {
+        g_error = ERROR_RESERVED_KEYWORD;
+        return false;
+    }
+
+    return add_symbol(label, 0, 0, 0, ATTRIBUTE_EXTERNAL);
 }
 
 bool handle_instruction(char *line, int instruction_index, char *label) {

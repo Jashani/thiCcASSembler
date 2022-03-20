@@ -18,5 +18,6 @@ bool handle_directive(char *line, directive directive_type, char *label);
 
 bool handle_directive_data(char *line);
 bool handle_directive_string(char *line);
+bool handle_directive_extern(char *line);
 
 #endif

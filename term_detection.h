@@ -15,5 +15,6 @@ bool check_for_instruction(char *line, int *instruction_index);
 bool is_instruction(char *term);
 bool is_directive(char *term);
 bool is_register(char *term);
+bool is_reserved(char *term);
 
 #endif

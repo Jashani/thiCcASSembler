@@ -72,3 +72,7 @@ bool is_register(char *term) {
     }
     return false;
 }
+
+bool is_reserved(char *term) {
+    return (is_instruction(term) || is_directive(term) || is_register(term));
+}
