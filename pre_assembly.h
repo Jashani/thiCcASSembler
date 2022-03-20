@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "common.h"
+#include "errors.h"
 #include "macro_table.h"
+#include "term_detection.h"
 
 #ifndef PRE_ASSEMBLY_H
 #define PRE_ASSEMBLY_H
