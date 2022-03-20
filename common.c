@@ -1,8 +1,8 @@
 #include "common.h"
 
-char* concatenate(char *start, char *end) {
+char *concatenate(char *start, char *end) {
     const int NULL_INDEX = 1;
-    char *result = (char *) safe_malloc(strlen(start) + strlen(end) + NULL_INDEX);
+    char *result = (char *)safe_malloc(strlen(start) + strlen(end) + NULL_INDEX);
     strcpy(result, start);
     strcat(result, end);
     return result;
@@ -31,9 +31,10 @@ bool match_word(char *line, char *word) {
     return false;
 }
 
-char* next_field(char *line) {
-    if (line == NULL)
+char *next_field(char *line) {
+    if (line == NULL) {
         return NULL;
+    }
     while (!(isspace(*line)) && *line != '\0') {
         line++;
     }
@@ -45,7 +46,7 @@ char* next_field(char *line) {
     return line;
 }
 
-char* trim(char *line) {
+char *trim(char *line) {
     if (line == NULL || strlen(line) <= 1) {
         return NULL;
     }
