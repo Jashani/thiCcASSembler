@@ -3,6 +3,18 @@
 binary_list code_image = NULL;
 binary_list data_image = NULL;
 
+int build_binary_instruction(encoding_type encoding, int functor,
+                             int target_addressing, int target_register,
+                             int source_addressing, int source_register) {
+    int final_value = encoding;
+    final_value |= (functor << FUNCTOR_LOCATION);
+    final_value |= (target_addressing << TARGET_ADDRESSING_LOCATION);
+    final_value |= (target_register << TARGET_REGISTER_LOCATION);
+    final_value |= (source_addressing << SOURCE_ADDRESSING_LOCATION);
+    final_value |= (source_register << SOURCE_REGISTER_LOCATION);
+    return final_value;
+}
+
 bool add_to_code_image(int data) {
     g_instruction_counter++;
     return add_to_image(code_image, data);

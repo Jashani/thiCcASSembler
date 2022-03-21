@@ -3,11 +3,26 @@
 #ifndef CONSTANT_ARRAYS
 #define CONSTANT_ARRAYS
 
-char *instructions[] = {"mov", "cmp", "add", "sub", "not", "clr", "lea", "inc",
-                        "dec", "jmp", "bne", "get", "prn", "jsr", "rts", "stop"};
+char *instructions[] = {"mov", "cmp", "add", "sub", "lea", "clr", "not", "inc",
+                        "dec", "jmp", "bne", "jsr", "red", "prn", "rts", "stop"};
 
 int instruction_opcodes[] = {0, 1, 2, 2, 4, 5, 5, 5, 5, 9, 9, 9, 12, 13, 14, 15};
 int instruction_functors[] = {0, 0, 10, 11, 0, 10, 11, 12, 13, 10, 11, 12, 0, 0, 0, 0};
+
+addressing first_argument_addressing[] = {
+    ADDRESSING_ALL,      ADDRESSING_ALL,      ADDRESSING_ALL,
+    ADDRESSING_ALL,      ADDRESSING_VARIABLE, ADDRESSING_DEFERRED,
+    ADDRESSING_DEFERRED, ADDRESSING_DEFERRED, ADDRESSING_DEFERRED,
+    ADDRESSING_VARIABLE, ADDRESSING_VARIABLE, ADDRESSING_VARIABLE,
+    ADDRESSING_DEFERRED, ADDRESSING_ALL,      ADDRESSING_NONE,
+    ADDRESSING_NONE};
+addressing second_argument_addressing[] = {
+    ADDRESSING_DEFERRED, ADDRESSING_ALL,      ADDRESSING_DEFERRED,
+    ADDRESSING_DEFERRED, ADDRESSING_DEFERRED, ADDRESSING_NONE,
+    ADDRESSING_NONE,     ADDRESSING_NONE,     ADDRESSING_NONE,
+    ADDRESSING_NONE,     ADDRESSING_NONE,     ADDRESSING_NONE,
+    ADDRESSING_NONE,     ADDRESSING_NONE,     ADDRESSING_NONE,
+    ADDRESSING_NONE};
 
 char *registers[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
@@ -43,6 +58,16 @@ bool check_for_instruction(char *line, int *instruction_index) {
         if (match_word(line, instructions[index])) {
             *instruction_index = index;
             return true;
+        }
+    }
+    return false;
+}
+
+int register_to_value(char *register_name) {
+    int index;
+    for (index = 0; index < REGISTER_COUNT; index++) {
+        if (match_word(register_name, registers[index])) {
+            return index;
         }
     }
     return false;
@@ -96,4 +121,19 @@ bool is_register(char *term) {
 
 bool is_reserved(char *term) {
     return (is_instruction(term) || is_directive(term) || is_register(term));
+}
+
+bool is_addressing_legal(int instruction, addressing to_check, int which_argument) {
+    addressing relevant_addressing;
+    if (which_argument == FIRST) {
+        relevant_addressing = first_argument_addressing[instruction];
+    } else {
+        relevant_addressing = second_argument_addressing[instruction];
+    }
+
+    /* If an or operation increases the total value, the addressing is illegal */
+    if ((relevant_addressing | to_check) != relevant_addressing) {
+        return false;
+    }
+    return true;
 }

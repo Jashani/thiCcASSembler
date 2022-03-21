@@ -10,21 +10,20 @@
 #ifndef FIRST_PASS_H
 #define FIRST_PASS_H
 
-typedef enum addressing {
-    ADDRESSING_NONE,
-    ADDRESSING_IMMEDIATE,
-    ADDRESSING_DIRECT,
-    ADDRESSING_INDEX,
-    ADDRESSING_REGISTER,
-    ADDRESSING_ILLEGAL
-} addressing;
-
 bool first_pass(FILE *file);
 bool should_process_line(char *line, int current_line);
 bool process_line(char *line, int current_line);
 bool check_for_label(char *line, char *label);
-bool handle_instruction(char *line, int instruction_index, char *label);
+
+bool valid_line(char *line, int arguments, char *first_argument, char *second_argument);
+void break_arguments(char *line, char *first, char *second);
 bool handle_directive(char *line, directive directive_type, char *label);
+bool handle_instruction(char *line, int instruction_index, char *label);
+bool encode_instruction(int arguments, int instruction, char *first_argument,
+                        char *second_argument);
+
+addressing addressing_method(char *line);
+bool is_addressing_immediate(char *line);
 
 bool handle_directive_data(char *line);
 bool handle_directive_string(char *line);

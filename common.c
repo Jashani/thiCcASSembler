@@ -35,12 +35,12 @@ char *next_field(char *line) {
     if (line == NULL) {
         return NULL;
     }
-    while (!(isspace(*line)) && *line != '\0') {
+    while (line != NULL && !(isspace(*line)) && *line != '\0') {
         line++;
     }
 
     line = trim(line);
-    if (*line == '\0') {
+    if (line == NULL || *line == '\0') {
         return NULL;
     }
     return line;

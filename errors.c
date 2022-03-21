@@ -48,5 +48,8 @@ void print_error(int current_line) {
         case ERROR_ADDRESSING:
             printf("Bad addressing, ensure legal operand usage.\n");
             break;
+        case ERROR_ARGUMENT_STRUCTURE:
+            printf("Bad argument structure for instruction.\n");
+            break;
     }
 }

@@ -259,21 +259,112 @@ bool handle_directive_extern(char *line) {
 
 bool handle_instruction(char *line, int instruction, char *label) {
     int arguments;
+    char first_argument[MAX_LINE_LENGTH] = "\0";
+    char second_argument[MAX_LINE_LENGTH] = "\0";
     bool has_label = (label[0] != '\0') ? true : false;
 
+    printf("handling instruction\n");
     /* Add label to symbol table if exists */
     if (has_label && !add_symbol(label, g_instruction_counter, ATTRIBUTE_CODE)) {
         return false;
     }
-
     add_to_code_image(instruction_opcode(instruction));
     /* Calculate size of instruction in image */
     arguments = instruction_arguments(instruction);
-    if (arguments == 1) {
-
+    line = next_field(line);
+    if (arguments == 0 && (line == NULL || *line == '\0')) {
+        return true;
     }
 
-    printf("handling instruction\n");
+    break_arguments(line, first_argument, second_argument);
+    if (!valid_line(line, arguments, first_argument, second_argument)) {
+        return false;
+    }
+
+    return encode_instruction(arguments, instruction, first_argument, second_argument);
+}
+
+bool encode_instruction(int arguments, int instruction, 
+                        char *first_argument, char *second_argument) {
+    int first_addressing, second_addressing;
+    int source_register = NO_VALUE, target_register = NO_VALUE;
+
+    if (arguments >= 1) {
+        first_addressing = addressing_method(first_argument);
+        if (!is_addressing_legal(instruction, first_addressing, FIRST)) {
+            g_error = ERROR_ADDRESSING;
+            return false;
+        }
+    }
+
+    if (arguments == 1) {
+        if (is_register(first_argument)) {
+            target_register = register_to_value(first_argument);
+        }
+        add_to_code_image(build_binary_instruction(
+            ENCODING_ABSOLUTE, instruction_functor(instruction),
+            first_addressing, target_register, NO_VALUE, NO_VALUE));
+    } else if (arguments == 2) {
+        second_addressing = addressing_method(second_argument);
+
+        if (!is_addressing_legal(instruction, second_addressing, SECOND)) {
+            g_error = ERROR_ADDRESSING;
+            return false;
+        }
+
+        if (is_register(first_argument)) {
+            source_register = register_to_value(first_argument);
+        }
+        if (is_register(second_argument)) {
+            target_register = register_to_value(second_argument);
+        }
+
+        add_to_code_image(build_binary_instruction(
+            ENCODING_ABSOLUTE, instruction_functor(instruction),
+            first_addressing, target_register, second_addressing,
+            source_register));
+    }
+
+    return true;
+}
+
+void break_arguments(char *line, char *first, char *second) {
+    char temp_first[MAX_LINE_LENGTH] = "\0";
+    char temp_second[MAX_LINE_LENGTH] = "\0";
+    if (line == NULL) {
+        return;
+    }
+    sscanf(line, "%[^,], %s", temp_first, temp_second);
+    sscanf(temp_first, "%s", first);
+    sscanf(temp_second, "%s", second);
+}
+
+/* Ensure line integrity */
+bool valid_line(char *line, int arguments, char *first_argument, char *second_argument) {
+    char temp1[MAX_LINE_LENGTH] = "\0";
+    char temp2[MAX_LINE_LENGTH] = "\0";
+    char temp3[MAX_LINE_LENGTH] = "\0";
+    if ((arguments == 0 && (*first_argument != '\0' || *second_argument != '\0')) ||
+        (arguments == 1 && (*first_argument == '\0' || *second_argument != '\0')) ||
+        (arguments == 2 && (*first_argument == '\0' || *second_argument == '\0'))) {
+        g_error = ERROR_ARGUMENT_STRUCTURE;
+        return false;
+    }
+    
+    /* Look for sneaky commas */
+    break_arguments(second_argument, temp1, temp2);
+    if (*temp2 != '\0') {
+        g_error = ERROR_ARGUMENT_STRUCTURE;
+        return false;
+    }
+
+    /* Too much content in the line */
+    sscanf(line, "%s %s %s", temp1, temp2, temp3);
+    if (*temp3 != '\0') {
+        g_error = ERROR_ARGUMENT_STRUCTURE;
+        return false;
+    }
+
     return true;
 }
 
@@ -302,6 +393,7 @@ bool is_addressing_immediate(char *line) {
             g_error = ERROR_ADDRESSING;
             return false;
         }
+        line++;
     }
     return true;
 }
