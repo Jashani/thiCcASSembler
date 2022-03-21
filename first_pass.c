@@ -133,7 +133,7 @@ bool handle_directive(char *line, directive directive_type, char *label) {
             g_error = ERROR_CANNOT_LABEL_DIRECTIVE;
             return false;
         }
-        if (!add_symbol(label, 1, 1, 1, ATTRIBUTE_DATA)) { /* mock values */
+        if (!add_symbol(label, g_data_counter, 1, 1, ATTRIBUTE_DATA)) { /* mock values */
             return false;
         }
     }
@@ -141,7 +141,6 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     if (directive_type == DIRECTIVE_DATA) {
         /* Add to symbol table with attribute 'data' */
         /* Add to image */
-        /* Extend directive_counter */
         printf("Directive is data\n");
         return handle_directive_data(current_field);
     }
@@ -149,7 +148,6 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     else if (directive_type == DIRECTIVE_STRING) {
         /* Add to symbol table with attribute 'data' */
         /* Add to image */
-        /* Extend directive_counter */
         printf("Directive is str\n");
         return handle_directive_string(current_field);
     }
@@ -161,7 +159,6 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     }
 
     else if (directive_type == DIRECTIVE_EXTERNAL) {
-        /* Add to symbol table with naught values and attribute 'external */
         printf("Directive is ext\n");
         handle_directive_extern(current_field);
         return true;
