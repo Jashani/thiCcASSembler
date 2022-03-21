@@ -5,7 +5,7 @@ bool first_pass(FILE *file) {
     int current_line = 1;
     bool success;
 
-    g_instruction_counter = 0;
+    g_instruction_counter = 100;
     g_data_counter = 0;
 
     while (fgets(line, MAX_LINE_LENGTH, file) != NULL) {
@@ -25,8 +25,9 @@ bool first_pass(FILE *file) {
     }
 
     printf("Data counter: %d\n", g_data_counter);
-    /* print_symbols(); */
+    print_symbols();
     print_data_image();
+    print_code_image();
 }
 
 bool process_line(char *line, int current_line) {
@@ -134,7 +135,7 @@ bool handle_directive(char *line, directive directive_type, char *label) {
             g_error = ERROR_CANNOT_LABEL_DIRECTIVE;
             return false;
         }
-        if (!add_symbol(label, g_data_counter, 1, 1, ATTRIBUTE_DATA)) { /* mock values */
+        if (!add_symbol(label, g_data_counter, ATTRIBUTE_DATA)) { /* mock values */
             return false;
         }
     }
@@ -256,7 +257,7 @@ bool handle_directive_extern(char *line) {
         return false;
     }
 
-    return add_symbol(label, 0, 0, 0, ATTRIBUTE_EXTERNAL);
+    return add_symbol(label, 0, ATTRIBUTE_EXTERNAL);
 }
 
 bool handle_instruction(char *line, int instruction_index, char *label) {
@@ -265,11 +266,12 @@ bool handle_instruction(char *line, int instruction_index, char *label) {
 
     if (has_label) {
         attributes = ATTRIBUTE_CODE;
-        if (!add_symbol(label, 1, 1, 1, attributes)) { /* mock values */
+        if (!add_symbol(label, g_instruction_counter, attributes)) { /* mock values */
             return false;
         }
     }
 
+    add_to_code_image(instruction_opcode(instruction_index));
     printf("handling instruction\n");
     return true;
 }

@@ -11,6 +11,7 @@
 
 bool check_for_directive(char *line, directive *directive_to_set);
 bool check_for_instruction(char *line, int *instruction_index);
+int instruction_opcode(int index);
 
 bool is_instruction(char *term);
 bool is_directive(char *term);

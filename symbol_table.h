@@ -4,6 +4,8 @@
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
+#define ADDRESS_INTERVAL 16
+
 typedef enum directive {
     DIRECTIVE_DATA,
     DIRECTIVE_STRING,
@@ -36,7 +38,7 @@ typedef struct symbol_node {
 
 typedef symbol_node* symbol_list;
 
-bool add_symbol(char *identifier, int value, int base_address, int offset, attribute_set attributes);
+bool add_symbol(char *identifier, int value, attribute_set attributes);
 bool symbol_exists(char *identifier);
 void clear_symbols();
 void print_symbols();

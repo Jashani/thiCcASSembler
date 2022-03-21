@@ -3,7 +3,7 @@
 
 symbol_list symbols = NULL;
 
-bool add_symbol(char *identifier, int value, int base_address, int offset, attribute_set attributes) {
+bool add_symbol(char *identifier, int value, attribute_set attributes) {
     struct symbol data;
     struct symbol_node *new_node, *current_node;
 
@@ -15,8 +15,8 @@ bool add_symbol(char *identifier, int value, int base_address, int offset, attri
     new_node = (struct symbol_node *)safe_malloc(sizeof(struct symbol_node));
     data.identifier = strdup(identifier);
     data.value = value;
-    data.base_address = base_address;
-    data.offset = offset;
+    data.base_address = value - (value % ADDRESS_INTERVAL);
+    data.offset = value % ADDRESS_INTERVAL;
     data.attributes = attributes;
     new_node->next = NULL;
     new_node->data = data;

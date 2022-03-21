@@ -4,7 +4,9 @@
 #define CONSTANT_ARRAYS
 
 char *instructions[] = {"mov", "cmp", "add", "sub", "not", "clr", "lea", "inc",
-                        "dec", "jmp", "bne", "get", "prn", "jsr", "rts", "hlt"};
+                        "dec", "jmp", "bne", "get", "prn", "jsr", "rts", "stop"};
+
+int instruction_opcodes[] = {0, 1, 2, 2, 4, 5, 5, 5, 5, 9, 9, 9, 12, 13, 14, 15};
 
 char *registers[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
@@ -43,6 +45,10 @@ bool check_for_instruction(char *line, int *instruction_index) {
         }
     }
     return false;
+}
+
+int instruction_opcode(int index) {
+    return instruction_opcodes[index];
 }
 
 bool is_instruction(char *term) {
