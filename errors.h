@@ -19,7 +19,8 @@ typedef enum error_types {
     ERROR_MISSING_QUOTES,
     ERROR_EMPTY_STRING,
     ERROR_BAD_ARGUMENT,
-    ERROR_CANNOT_LABEL_DIRECTIVE
+    ERROR_CANNOT_LABEL_DIRECTIVE,
+    ERROR_ADDRESSING
 } error_type;
 
 void print_error(int current_line);

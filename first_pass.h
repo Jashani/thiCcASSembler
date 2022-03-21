@@ -10,6 +10,15 @@
 #ifndef FIRST_PASS_H
 #define FIRST_PASS_H
 
+typedef enum addressing {
+    ADDRESSING_NONE,
+    ADDRESSING_IMMEDIATE,
+    ADDRESSING_DIRECT,
+    ADDRESSING_INDEX,
+    ADDRESSING_REGISTER,
+    ADDRESSING_ILLEGAL
+} addressing;
+
 bool first_pass(FILE *file);
 bool should_process_line(char *line, int current_line);
 bool process_line(char *line, int current_line);

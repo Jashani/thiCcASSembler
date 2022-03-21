@@ -1,14 +1,15 @@
-#include "common.h"
 #include "machine_code.h"
 
 binary_list code_image = NULL;
 binary_list data_image = NULL;
 
 bool add_to_code_image(int data) {
+    g_instruction_counter++;
     return add_to_image(code_image, data);
 }
 
 bool add_to_data_image(int data) {
+    g_data_counter++;
     return add_to_image(data_image, data);
 }
 

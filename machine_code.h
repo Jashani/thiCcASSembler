@@ -1,3 +1,5 @@
+#include "globals.h"
+#include "common.h"
 
 #define FUNCTOR_LOCATION 12
 

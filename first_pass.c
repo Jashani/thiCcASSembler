@@ -33,7 +33,7 @@ bool first_pass(FILE *file) {
 bool process_line(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH] = "\0";
     directive directive_type;
-    int instruction_index;
+    int instruction;
 
     line = trim(line);
     if (line == NULL) {
@@ -62,8 +62,8 @@ bool process_line(char *line, int current_line) {
     }
 
     printf("Checking for instruction\n");
-    if (check_for_instruction(line, &instruction_index)) {
-        return handle_instruction(line, instruction_index, label);
+    if (check_for_instruction(line, &instruction)) {
+        return handle_instruction(line, instruction, label);
     } else {
         g_error = ERROR_BAD_INSTRUCTION;
         return false;
@@ -195,7 +195,6 @@ bool handle_directive_data(char *line) {
         }
 
         add_to_data_image(current_number);
-        g_data_counter++;
         line = trim(line);
         if (line == NULL || *line == '\0') {
             break;
@@ -228,12 +227,10 @@ bool handle_directive_string(char *line) {
     while (line != NULL && *line != '"' && *line != '\0') {
         add_to_data_image(*line);
         line++;
-        g_data_counter++;
         /* Extend data image */
     }
+    add_to_data_image('\0'); /* For terminating character */
 
-    g_data_counter++; /* For terminating character */
-    add_to_data_image('\0');
     if (line == NULL || *line == '\0') {
         g_error = ERROR_MISSING_QUOTES;
         return false;
@@ -260,19 +257,52 @@ bool handle_directive_extern(char *line) {
     return add_symbol(label, 0, ATTRIBUTE_EXTERNAL);
 }
 
-bool handle_instruction(char *line, int instruction_index, char *label) {
-    attribute_set attributes = ATTRIBUTE_NONE;
+bool handle_instruction(char *line, int instruction, char *label) {
+    int arguments;
     bool has_label = (label[0] != '\0') ? true : false;
 
-    if (has_label) {
-        attributes = ATTRIBUTE_CODE;
-        if (!add_symbol(label, g_instruction_counter, attributes)) { /* mock values */
+    /* Add label to symbol table if exists */
+    if (has_label && !add_symbol(label, g_instruction_counter, ATTRIBUTE_CODE)) {
+        return false;
+    }
+
+    add_to_code_image(instruction_opcode(instruction));
+    /* Calculate size of instruction in image */
+    arguments = instruction_arguments(instruction);
+    if (arguments == 1) {
+
+    }
+
+    printf("handling instruction\n");
+    return true;
+}
+
+addressing addressing_method(char *line) {
+    if (line == NULL || *line == '\0') {
+        return ADDRESSING_NONE;
+    } 
+    if (is_addressing_immediate(line)) {
+        if (g_error != NO_ERRORS) {
+            return ADDRESSING_ILLEGAL;
+        }
+        return ADDRESSING_IMMEDIATE;
+    }
+}
+
+bool is_addressing_immediate(char *line) {
+    if (*line != '#') {
+        return false;
+    }
+    line++;
+    if (*line == '-' || *line == '+') {
+        line++;
+    }
+    while (*line != ',' && *line != '\0' && !isspace(*line)) {
+        if (!isdigit(*line)) {
+            g_error = ERROR_ADDRESSING;
             return false;
         }
     }
-
-    add_to_code_image(instruction_opcode(instruction_index));
-    printf("handling instruction\n");
     return true;
 }
 

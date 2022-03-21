@@ -45,5 +45,8 @@ void print_error(int current_line) {
         case ERROR_CANNOT_LABEL_DIRECTIVE:
             printf("May only label '.data' and '.string' directives.\n");
             break;
+        case ERROR_ADDRESSING:
+            printf("Bad addressing, ensure legal operand usage.\n");
+            break;
     }
 }
