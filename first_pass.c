@@ -167,8 +167,8 @@ bool handle_directive(char *line, directive directive_type, char *label) {
 }
 
 bool handle_directive_data(char *line) {
-    int g_data_counter = 0;
     bool number_exists;
+    int current_number;
 
     if (!isdigit(*line) && *line != '-' && *line != '+') {
         g_error = ERROR_SYNTAX;
@@ -177,6 +177,7 @@ bool handle_directive_data(char *line) {
 
     while (line != NULL && *line != '\0') {
         number_exists = false;
+        sscanf(line, "%d", &current_number);
 
         if (*line == '-' || *line == '+') {
             line++;
@@ -192,6 +193,7 @@ bool handle_directive_data(char *line) {
             return false;
         }
 
+        add_to_data_image(current_number);
         g_data_counter++;
         line = trim(line);
         if (line == NULL || *line == '\0') {
@@ -207,13 +209,10 @@ bool handle_directive_data(char *line) {
         line = trim(line);
     }
 
-    g_data_counter += g_data_counter;
     return true;
 }
 
-bool handle_directive_string(char *line) {
-    int g_data_counter = 0;
-    
+bool handle_directive_string(char *line) {    
     if (*line != '"') {
         g_error = ERROR_MISSING_QUOTES;
         return false;
