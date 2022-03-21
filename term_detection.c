@@ -7,6 +7,7 @@ char *instructions[] = {"mov", "cmp", "add", "sub", "not", "clr", "lea", "inc",
                         "dec", "jmp", "bne", "get", "prn", "jsr", "rts", "stop"};
 
 int instruction_opcodes[] = {0, 1, 2, 2, 4, 5, 5, 5, 5, 9, 9, 9, 12, 13, 14, 15};
+int instruction_functors[] = {0, 0, 10, 11, 0, 10, 11, 12, 13, 10, 11, 12, 0, 0, 0, 0};
 
 char *registers[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
@@ -49,6 +50,20 @@ bool check_for_instruction(char *line, int *instruction_index) {
 
 int instruction_opcode(int index) {
     return instruction_opcodes[index];
+}
+
+int instruction_functor(int index) {
+    return instruction_functors[index];
+}
+
+int instruction_arguments(int index) {
+    if (index <= 4) {
+        return 2;
+    } else if (index >= 12) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 bool is_instruction(char *term) {

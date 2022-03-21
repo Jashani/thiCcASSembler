@@ -1,3 +1,7 @@
+/* Term Detection
+ * Responsible for identifying terms and providing
+ * Additional information about them */
+
 #include "common.h"
 #include "errors.h"
 #include "globals.h"
@@ -12,6 +16,7 @@
 bool check_for_directive(char *line, directive *directive_to_set);
 bool check_for_instruction(char *line, int *instruction_index);
 int instruction_opcode(int index);
+int instruction_arguments(int index);
 
 bool is_instruction(char *term);
 bool is_directive(char *term);
