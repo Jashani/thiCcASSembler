@@ -48,3 +48,4 @@ typedef binary_node* binary_list;
 bool add_to_code_image(char *instruction, int source_registry, int source_addressing,
                        int target_registry, int target_addressing);
 bool add_to_data_image(int data);
+void print_data_image();

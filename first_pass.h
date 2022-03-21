@@ -5,6 +5,7 @@
 #include "symbol_table.h"
 #include "macro_table.h"
 #include "term_detection.h"
+#include "machine_code.h"
 
 #ifndef FIRST_PASS_H
 #define FIRST_PASS_H

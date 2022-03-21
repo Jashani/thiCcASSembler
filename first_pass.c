@@ -25,7 +25,8 @@ bool first_pass(FILE *file) {
     }
 
     printf("Data counter: %d\n", g_data_counter);
-    print_symbols();
+    /* print_symbols(); */
+    print_data_image();
 }
 
 bool process_line(char *line, int current_line) {
@@ -166,7 +167,7 @@ bool handle_directive(char *line, directive directive_type, char *label) {
 }
 
 bool handle_directive_data(char *line) {
-    int temp_count = 0;
+    int g_data_counter = 0;
     bool number_exists;
 
     if (!isdigit(*line) && *line != '-' && *line != '+') {
@@ -191,7 +192,7 @@ bool handle_directive_data(char *line) {
             return false;
         }
 
-        temp_count++;
+        g_data_counter++;
         line = trim(line);
         if (line == NULL || *line == '\0') {
             break;
@@ -206,12 +207,12 @@ bool handle_directive_data(char *line) {
         line = trim(line);
     }
 
-    g_data_counter += temp_count;
+    g_data_counter += g_data_counter;
     return true;
 }
 
 bool handle_directive_string(char *line) {
-    int temp_count = 0;
+    int g_data_counter = 0;
     
     if (*line != '"') {
         g_error = ERROR_MISSING_QUOTES;
@@ -225,12 +226,14 @@ bool handle_directive_string(char *line) {
     }
 
     while (line != NULL && *line != '"' && *line != '\0') {
+        add_to_data_image(*line);
         line++;
-        temp_count++;
+        g_data_counter++;
         /* Extend data image */
     }
 
-    temp_count++; /* For terminating character */
+    g_data_counter++; /* For terminating character */
+    add_to_data_image('\0');
     if (line == NULL || *line == '\0') {
         g_error = ERROR_MISSING_QUOTES;
         return false;
@@ -243,7 +246,6 @@ bool handle_directive_string(char *line) {
         return false;
     }
 
-    g_data_counter += temp_count;
     return true;
 }
 

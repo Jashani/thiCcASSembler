@@ -13,7 +13,7 @@ bool add_to_data_image(int data) {
     new_node->next = NULL;
     new_node->value = data;
 
-    if (data_image = NULL) {
+    if (data_image == NULL) {
         data_image = new_node;
         return true;
     }
@@ -24,4 +24,13 @@ bool add_to_data_image(int data) {
     }
 
     current_node->next = new_node;
+}
+
+void print_data_image() {
+    struct binary_node *current_node;
+    current_node = data_image;
+    while (current_node != NULL) {
+        printf("Data image entry: %d (%c)\n", current_node->value, current_node->value);
+        current_node = current_node->next;
+    }
 }
