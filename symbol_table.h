@@ -40,6 +40,7 @@ typedef symbol_node* symbol_list;
 
 bool add_symbol(char *identifier, int value, attribute_set attributes);
 bool symbol_exists(char *identifier);
+bool finalise_data();
 void clear_symbols();
 void print_symbols();
 

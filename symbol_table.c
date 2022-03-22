@@ -45,6 +45,21 @@ bool symbol_exists(char *identifier) {
     return false;
 }
 
+bool finalise_data() {
+    int new_value;
+    struct symbol_node *current_node;
+    current_node = symbols;
+    while (current_node != NULL) {
+        if ((current_node->data.attributes | ATTRIBUTE_DATA) == ATTRIBUTE_DATA) {
+            new_value = current_node->data.value + g_instruction_counter;
+            current_node->data.base_address = new_value - (new_value % ADDRESS_INTERVAL);
+            current_node->data.offset = (new_value % ADDRESS_INTERVAL);
+            current_node->data.value = new_value;
+        }
+        current_node = current_node->next;
+    }
+}
+
 void print_symbols() { /* Debug method */
     struct symbol_node *current_node;
     current_node = symbols;

@@ -24,7 +24,8 @@ bool first_pass(FILE *file) {
         current_line++;
     }
 
-    printf("Data counter: %d\n", g_data_counter);
+    printf("Data counter: %d | Code counter: %d\n", g_data_counter, g_instruction_counter);
+    finalise_data();
     print_symbols();
     print_data_image();
     print_code_image();
