@@ -1,5 +1,6 @@
 #include "errors.h"
 #include "globals.h"
+#include "utilities.h"
 
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
