@@ -1,3 +1,4 @@
+#include "common.h"
 #include "errors.h"
 #include "globals.h"
 #include "utilities.h"
@@ -16,10 +17,10 @@ typedef enum directive {
 
 typedef enum attribute {
     ATTRIBUTE_NONE = 0,
-    ATTRIBUTE_CODE = 1,
-    ATTRIBUTE_ENTRY = 2,
-    ATTRIBUTE_DATA = 4,
-    ATTRIBUTE_EXTERNAL = 8
+    ATTRIBUTE_CODE = 1 << 0,
+    ATTRIBUTE_ENTRY = 1 << 1,
+    ATTRIBUTE_DATA = 1 << 2,
+    ATTRIBUTE_EXTERNAL = 1 << 3
 } attribute;
 
 typedef int attribute_set;
@@ -40,9 +41,13 @@ typedef struct symbol_node {
 typedef symbol_node* symbol_list;
 
 bool add_symbol(char *identifier, int value, attribute_set attributes);
+bool add_attribute_to_symbol(char *identifier, attribute new_attribute);
+bool symbol_address(char *identifier, int *base, int *offset);
+symbol_node *get_symbol(char *identifier);
 bool symbol_exists(char *identifier);
 bool finalise_data();
 void clear_symbols();
 void print_symbols();
+void base_and_offset(int address, int *base, int *offset);
 
 #endif
