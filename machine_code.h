@@ -22,11 +22,12 @@ typedef enum encoding_type {
 typedef struct binary_node {
     struct binary_node *next;
     int value;
+    char *future_label; /* In case a node needs to be populated later */
 } binary_node;
 
 typedef binary_node* binary_list;
 
-bool add_to_code_image(int data);
+bool add_to_code_image(int data, char *future_label);
 bool add_to_data_image(int data);
 bool add_to_image(binary_list image, int data);
 int addressing_to_value(addressing to_convert);

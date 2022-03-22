@@ -214,13 +214,14 @@ bool handle_instruction(char *line, int instruction, char *label) {
     char first_argument[MAX_LINE_LENGTH] = "\0";
     char second_argument[MAX_LINE_LENGTH] = "\0";
     bool has_label = (label[0] != '\0') ? true : false;
+    char *label_value = (label[0] != '\0') ? label : NULL;
 
     printf("handling instruction\n");
     /* Add label to symbol table if exists */
     if (has_label && !add_symbol(label, g_instruction_counter, ATTRIBUTE_CODE)) {
         return false;
     }
-    add_to_code_image(ENCODING_ABSOLUTE | instruction_opcode(instruction));
+    add_to_code_image(ENCODING_ABSOLUTE | instruction_opcode(instruction), NULL);
     /* Calculate size of instruction in image */
     arguments = instruction_arguments(instruction);
     line = next_field(line);
@@ -260,7 +261,7 @@ bool encode_instruction(int arguments, int instruction,
 
         add_to_code_image(build_binary_instruction(
             ENCODING_ABSOLUTE, instruction_functor(instruction),
-            first_addressing, target_register, NO_VALUE, NO_VALUE));
+            first_addressing, target_register, NO_VALUE, NO_VALUE), NULL);
         add_addressing_data(first_addressing, first_argument, FIRST);
     } else if (arguments == 2) {
         second_addressing = addressing_method(second_argument);
@@ -285,7 +286,7 @@ bool encode_instruction(int arguments, int instruction,
         add_to_code_image(build_binary_instruction(
             ENCODING_ABSOLUTE, instruction_functor(instruction),
             second_addressing, target_register, first_addressing,
-            source_register));
+            source_register), NULL);
         add_addressing_data(first_addressing, first_argument, FIRST);
         add_addressing_data(second_addressing, second_argument, SECOND);
     }
@@ -295,11 +296,11 @@ bool encode_instruction(int arguments, int instruction,
 
 bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
     if (addressing_type == ADDRESSING_IMMEDIATE) {
-        add_to_code_image(ENCODING_ABSOLUTE | extract_immediate_value(argument));
+        add_to_code_image(ENCODING_ABSOLUTE | extract_immediate_value(argument), NULL);
     } else if (addressing_type == ADDRESSING_DIRECT ||
                addressing_type == ADDRESSING_INDEX) {
-        add_to_code_image(0); /* Placeholders */
-        add_to_code_image(0);
+        add_to_code_image(0, argument); /* Placeholders */
+        add_to_code_image(0, argument);
     }
 }
 

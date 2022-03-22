@@ -30,13 +30,14 @@ int addressing_to_value(addressing to_convert) {
     }
 }
 
-bool add_to_code_image(int data) {
+bool add_to_code_image(int data, char *future_label) {
     struct binary_node *new_node = (struct binary_node *)safe_malloc(sizeof(struct binary_node));
     struct binary_node *current_node;
 
     g_instruction_counter++;
     new_node->next = NULL;
     new_node->value = data;
+    new_node->future_label = future_label;
 
     printf("Adding to code image entry: %05x\n", data);
     if (code_image == NULL) {
@@ -59,6 +60,7 @@ bool add_to_data_image(int data) {
     g_data_counter++;
     new_node->next = NULL;
     new_node->value = data;
+    new_node->future_label = NULL;
 
     if (data_image == NULL) {
         data_image = new_node;
