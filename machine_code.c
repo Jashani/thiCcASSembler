@@ -114,3 +114,32 @@ bool populate_symbols() {
     }
     return true;
 }
+
+bool write_image_output(FILE *file) {
+    struct binary_node *current_node;
+    int line = 100;
+
+    printf("Writing title\n");
+    fprintf(file, "\t%d\t%d\n", g_instruction_counter - 100, g_data_counter);
+    current_node =  code_image;
+    while (current_node != NULL) {
+        write_binary_string(file, current_node->value, line);
+        line++;
+        current_node = current_node->next;
+    }
+    current_node = data_image;
+    while (current_node != NULL) {
+        write_binary_string(file, current_node->value, line);
+        line++;
+        current_node = current_node->next;
+    }
+}
+
+bool write_binary_string(FILE *file, int data, int line) {
+    fprintf(file, "%04d A%x-B%x-C%x-D%x-E%x\n", line,
+            (data >> (4 * 4)) & 0xf,
+            (data >> (4 * 3)) & 0xf,
+            (data >> (4 * 2)) & 0xf,
+            (data >> (4 * 1)) & 0xf,
+            (data >> (4 * 0)) & 0xf);
+}

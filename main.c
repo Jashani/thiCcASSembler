@@ -10,9 +10,13 @@ char *expanded_assembly_path(char *file_name) {
     return concatenate(file_name, ".am");
 }
 
+char *object_path(char *file_name) {
+    return concatenate(file_name, ".ob");
+}
+
 bool process_file(char *path) {
     bool success;
-    FILE *source_file, *expanded_source_file;
+    FILE *source_file, *expanded_source_file, *object_file;
 
     source_file = fopen(assembly_path(path), "r");
     if (source_file == NULL) {
@@ -43,6 +47,10 @@ bool process_file(char *path) {
     if (!success) {
         return false;
     }
+    printf("Time to write!\n");
+    object_file = fopen(object_path(path), "w");
+    write_image_output(object_file);
+    fclose(object_file);
 
     return true;
 }
