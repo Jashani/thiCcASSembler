@@ -1,11 +1,17 @@
 #include "second_pass.h"
 
 bool second_pass(FILE *file) {
+    printf("\n#####\nSECOND PASS\n#####\n\n");
     pass_over_file(file);
+    if (!populate_symbols()) {
+        print_error(UNKNOWN_LINE);
+        return false;
+    }
 
     print_symbols();
     print_data_image();
     print_code_image();
+    return true;
 }
 
 bool pass_over_file(FILE *file) {

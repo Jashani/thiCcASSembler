@@ -2,6 +2,9 @@
 
 void print_error(int current_line) {
     printf("Error on line %d: ", current_line);
+    if (current_line == UNKNOWN_LINE) {
+        printf("(error not associated with line) ");
+    }
     switch (g_error) {
         case ERROR_SYNTAX:
             printf("Syntax error.\n");
@@ -53,6 +56,9 @@ void print_error(int current_line) {
             break;
         case ERROR_NO_SYMBOL:
             printf("Symbol isn't defined.\n");
+            break;
+        case ERROR_CANT_FIND_SYMBOL:
+            printf("A symbol was found in code image but not in symbol table. Ensure all symbols are defined.\n");
             break;
     }
 }

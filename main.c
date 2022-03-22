@@ -28,9 +28,21 @@ bool process_file(char *path) {
         remove(expanded_assembly_path(path));
         return false;
     }
+    
     expanded_source_file = fopen(expanded_assembly_path(path), "r");
-    first_pass(expanded_source_file);
+    success = first_pass(expanded_source_file);
     fclose(expanded_source_file);
+    if (!success) {
+        printf("Uh oh\n");
+        return false;
+    }
+
+    expanded_source_file = fopen(expanded_assembly_path(path), "r");
+    success = second_pass(expanded_source_file);
+    fclose(expanded_source_file);
+    if (!success) {
+        return false;
+    }
 
     return true;
 }

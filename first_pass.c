@@ -1,9 +1,10 @@
 #include "first_pass.h"
 
 bool first_pass(FILE *file) {
+    printf("\n#####\nFIRST PASS\n#####\n\n");
     char line[MAX_LINE_LENGTH];
     int current_line = 1;
-    bool success;
+    bool success, absolute_success = true;
 
     g_instruction_counter = 100;
     g_data_counter = 0;
@@ -15,6 +16,7 @@ bool first_pass(FILE *file) {
             printf("Processing line %d\n", current_line);
             success = process_line(line, current_line);
             if (!success) {
+                absolute_success = false;
                 print_error(current_line);
             }
         } else {
@@ -29,6 +31,7 @@ bool first_pass(FILE *file) {
     print_symbols();
     print_data_image();
     print_code_image();
+    return absolute_success;
 }
 
 bool process_line(char *line, int current_line) {

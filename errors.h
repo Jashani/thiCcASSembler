@@ -4,6 +4,8 @@
 #ifndef ERRORS_H
 #define ERRORS_H
 
+#define UNKNOWN_LINE -1
+
 typedef enum error_types {
     NO_ERRORS = 0,
     ERROR_SYNTAX,
@@ -22,7 +24,8 @@ typedef enum error_types {
     ERROR_CANNOT_LABEL_DIRECTIVE,
     ERROR_ADDRESSING,
     ERROR_ARGUMENT_STRUCTURE,
-    ERROR_NO_SYMBOL
+    ERROR_NO_SYMBOL,
+    ERROR_CANT_FIND_SYMBOL
 } error_type;
 
 void print_error(int current_line);

@@ -95,3 +95,22 @@ void print_code_image() {
         current_node = current_node->next;
     }
 }
+
+bool populate_symbols() {
+    int current_base, current_offset;
+    struct binary_node *current_node;
+    current_node = code_image;
+    while (current_node != NULL) {
+        if (current_node->future_label != NULL) {
+            if (!symbol_address(current_node->future_label, &current_base, &current_offset)) {
+                return false;
+            }
+            current_node->value = current_base;
+            current_node = current_node->next;
+            current_node->value = current_offset;
+        }
+
+        current_node = current_node->next;
+    }
+    return true;
+}

@@ -38,5 +38,6 @@ void print_code_image();
 int build_binary_instruction(encoding_type encoding, int functor,
                              int target_addressing, int target_register,
                              int source_addressing, int source_register);
+bool populate_symbols();
 
 #endif

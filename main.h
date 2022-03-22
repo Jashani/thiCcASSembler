@@ -2,6 +2,7 @@
 #include "common.h"
 #include "pre_assembly.h"
 #include "first_pass.h"
+#include "second_pass.h"
 
 #ifndef MAIN_H
 #define MAIN_H
