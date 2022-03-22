@@ -1,4 +1,3 @@
-#include "common.h"
 #include "macro_table.h"
 
 macro_list macros = NULL;

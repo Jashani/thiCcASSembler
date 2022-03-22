@@ -1,3 +1,6 @@
+#include "common.h"
+#include "utilities.h"
+
 #ifndef MACRO_TABLE_H
 #define MACRO_TABLE_H
 

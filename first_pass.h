@@ -1,12 +1,12 @@
-#include <stdio.h>
-#include "globals.h"
+#include "addressing.h"
 #include "common.h"
 #include "errors.h"
-#include "utilities.h"
-#include "symbol_table.h"
-#include "macro_table.h"
-#include "term_detection.h"
+#include "globals.h"
 #include "machine_code.h"
+#include "macro_table.h"
+#include "symbol_table.h"
+#include "term_detection.h"
+#include "utilities.h"
 
 #ifndef FIRST_PASS_H
 #define FIRST_PASS_H
