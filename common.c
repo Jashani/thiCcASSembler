@@ -75,3 +75,13 @@ bool strings_match(char *first, char *second) {
     } while (temp);
     return true;
 }
+
+void word_in_brackets(char *line, char *word) {
+    sscanf(line, "%*[^[][%3s]", word);
+}
+
+void word_before_brackets(char *line, char *word) {
+    char temp_word[MAX_LINE_LENGTH];
+    sscanf(line, "%[^[]", temp_word); /* Word before brackets */
+    sscanf(temp_word, "%s", word);    /* Trim both sides */
+}

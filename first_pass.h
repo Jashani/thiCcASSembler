@@ -22,13 +22,13 @@ bool handle_instruction(char *line, int instruction_index, char *label);
 bool encode_instruction(int arguments, int instruction, char *first_argument,
                         char *second_argument);
 
+bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot);
 addressing addressing_method(char *line);
 bool is_addressing_immediate(char *line);
 bool is_addressing_direct(char *line);
 bool is_addressing_index(char *line);
 
-void word_in_brackets(char *line, char *word);
-void word_before_brackets(char *line, char *word);
+int extract_immediate_value(char *argument);
 
 bool handle_directive_data(char *line);
 bool handle_directive_string(char *line);

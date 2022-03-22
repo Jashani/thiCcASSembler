@@ -21,5 +21,7 @@ bool match_word(char *line, char *word);
 char *next_field(char *line);
 char *trim(char *line);
 bool strings_match(char *first, char *second);
+void word_in_brackets(char *line, char *word);
+void word_before_brackets(char *line, char *word);
 
 #endif

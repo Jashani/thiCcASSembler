@@ -287,6 +287,7 @@ bool handle_instruction(char *line, int instruction, char *label) {
 bool encode_instruction(int arguments, int instruction, 
                         char *first_argument, char *second_argument) {
     int first_addressing, second_addressing;
+    char word_holder[MAX_LINE_LENGTH];
     int source_register = NO_VALUE, target_register = NO_VALUE;
 
     if (arguments >= 1) {
@@ -298,12 +299,17 @@ bool encode_instruction(int arguments, int instruction,
     }
 
     if (arguments == 1) {
-        if (is_register(first_argument)) {
+        if (first_addressing == ADDRESSING_INDEX) {
+            word_in_brackets(first_argument, word_holder);
+            target_register = register_to_value(word_holder);
+        } else if (first_addressing == ADDRESSING_REGISTER) {
             target_register = register_to_value(first_argument);
         }
+
         add_to_code_image(build_binary_instruction(
             ENCODING_ABSOLUTE, instruction_functor(instruction),
             first_addressing, target_register, NO_VALUE, NO_VALUE));
+        add_addressing_data(first_addressing, first_argument, FIRST);
     } else if (arguments == 2) {
         second_addressing = addressing_method(second_argument);
         if (!is_addressing_legal(instruction, second_addressing, SECOND)) {
@@ -311,20 +317,38 @@ bool encode_instruction(int arguments, int instruction,
             return false;
         }
 
-        if (is_register(first_argument)) {
+        if (first_addressing == ADDRESSING_INDEX) {
+            word_in_brackets(first_argument, word_holder);
+            source_register = register_to_value(word_holder);
+        } else if (first_addressing == ADDRESSING_REGISTER) {
             source_register = register_to_value(first_argument);
         }
-        if (is_register(second_argument)) {
-            target_register = register_to_value(second_argument);
+        if (second_addressing == ADDRESSING_INDEX) {
+            word_in_brackets(first_argument, word_holder);
+            target_register = register_to_value(word_holder);
+        } else if (second_addressing == ADDRESSING_REGISTER) {
+            target_register = register_to_value(first_argument);
         }
 
         add_to_code_image(build_binary_instruction(
             ENCODING_ABSOLUTE, instruction_functor(instruction),
             first_addressing, target_register, second_addressing,
             source_register));
+        add_addressing_data(first_addressing, first_argument, FIRST);
+        add_addressing_data(second_addressing, second_argument, SECOND);
     }
 
     return true;
+}
+
+bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
+    if (addressing_type == ADDRESSING_IMMEDIATE) {
+        add_to_code_image(extract_immediate_value(argument));
+    } else if (addressing_type == ADDRESSING_DIRECT ||
+               addressing_type == ADDRESSING_INDEX) {
+        add_to_code_image(0); /* Placeholders */
+        add_to_code_image(0);
+    }
 }
 
 void break_arguments(char *line, char *first, char *second) {
@@ -421,16 +445,6 @@ bool is_addressing_index(char *line) {
     return false;
 }
 
-void word_in_brackets(char *line, char *word) {
-    sscanf(line, "%*[^[][%3s]", word);
-}
-
-void word_before_brackets(char *line, char *word) {
-    char temp_word[MAX_LINE_LENGTH];
-    sscanf(line, "%[^[]", temp_word); /* Word before brackets */
-    sscanf(temp_word, "%s", word); /* Trim both sides */
-}
-
 bool is_addressing_direct(char *line) {
     char *fake_label;
     char placeholder[MAX_LINE_LENGTH];
@@ -441,6 +455,12 @@ bool is_addressing_direct(char *line) {
     }
     free(fake_label);
     return false;
+}
+
+int extract_immediate_value(char *argument) {
+    int value;
+    sscanf(argument, "#%d", &value);
+    return value;
 }
 
 bool should_process_line(char *line, int current_line) {
