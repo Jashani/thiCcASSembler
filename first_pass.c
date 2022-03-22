@@ -345,3 +345,10 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
 
     return true;
 }
+
+int extract_immediate_value(char *argument) {
+    int value;
+    sscanf(argument, "#%d", &value);
+    value = set_to_base16(value);
+    return value;
+}

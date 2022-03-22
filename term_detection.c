@@ -268,10 +268,3 @@ bool is_addressing_direct(char *line) {
     free(fake_label);
     return false;
 }
-
-int extract_immediate_value(char *argument) {
-    int value;
-    sscanf(argument, "#%d", &value);
-    value = set_to_base16(value);
-    return value;
-}
