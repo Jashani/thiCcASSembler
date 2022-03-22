@@ -72,11 +72,11 @@ int register_to_value(char *register_name) {
             return index;
         }
     }
-    return false;
 }
 
 int instruction_opcode(int index) {
-    return instruction_opcodes[index];
+    int binary_opcode = 1 << instruction_opcodes[index];
+    return binary_opcode;
 }
 
 int instruction_functor(int index) {
