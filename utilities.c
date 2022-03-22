@@ -106,3 +106,17 @@ bool should_process_line(char *line, int current_line) {
     }
     return true;
 }
+
+bool valid_start(char *line) {
+    if (line == NULL) {
+        g_error = ERROR_FAILED_READ;
+        return false;
+    }
+
+    if (!isalpha(*line) && *line != '.') { /* Legal starting characters */
+        g_error = ERROR_SYNTAX;
+        return false;
+    }
+    
+    return true;
+}

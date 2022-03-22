@@ -37,13 +37,7 @@ bool process_line(char *line, int current_line) {
     int instruction;
 
     line = trim(line);
-    if (line == NULL) {
-        g_error = ERROR_FAILED_READ;
-        return false;
-    }
-
-    if (!isalpha(*line) && *line != '.') { /* Legal starting characters */
-        g_error = ERROR_SYNTAX;
+    if (!valid_start(line)) {
         return false;
     }
 

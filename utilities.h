@@ -15,5 +15,6 @@ void word_in_brackets(char *line, char *word);
 void word_before_brackets(char *line, char *word);
 int set_to_base16(int value);
 bool should_process_line(char *line, int current_line);
+bool valid_start(char *line);
 
 #endif
