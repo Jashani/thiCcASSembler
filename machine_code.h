@@ -1,6 +1,7 @@
-#include "globals.h"
 #include "common.h"
+#include "globals.h"
 #include "term_detection.h"
+#include "utilities.h"
 
 #ifndef MACHINE_CODE_H
 #define MACHINE_CODE_H

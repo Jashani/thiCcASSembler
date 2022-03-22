@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "common.h"
 #include "errors.h"
+#include "utilities.h"
 #include "symbol_table.h"
 #include "macro_table.h"
 #include "term_detection.h"
@@ -11,7 +12,6 @@
 #define FIRST_PASS_H
 
 bool first_pass(FILE *file);
-bool should_process_line(char *line, int current_line);
 bool process_line(char *line, int current_line);
 
 bool valid_line(char *line, int arguments, char *first_argument, char *second_argument);

@@ -345,20 +345,3 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
 
     return true;
 }
-
-bool should_process_line(char *line, int current_line) {
-    line = trim(line);
-    if (line == NULL) { /* Fake line :( */
-        return false;
-    }
-    printf("Line %d is:\n|\t%s\n", current_line, line);
-    if (*line == ';' || *line == '\0') { /* If comment or line's over */
-        return false;
-    }
-    if (strlen(line) > MAX_LINE_LENGTH - 2) {
-        g_error = ERROR_LINE_TOO_LONG;
-        print_error(current_line);
-        return false;
-    }
-    return true;
-}

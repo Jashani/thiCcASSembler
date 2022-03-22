@@ -6,6 +6,7 @@
 #include "errors.h"
 #include "globals.h"
 #include "symbol_table.h"
+#include "utilities.h"
 
 #ifndef TERM_DETECTION_H
 #define TERM_DETECTION_H

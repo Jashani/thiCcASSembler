@@ -1,8 +1,9 @@
-#include "common.h"
+#include "utilities.h"
 
 char *concatenate(char *start, char *end) {
     const int NULL_INDEX = 1;
-    char *result = (char *)safe_malloc(strlen(start) + strlen(end) + NULL_INDEX);
+    char *result =
+        (char *)safe_malloc(strlen(start) + strlen(end) + NULL_INDEX);
     strcpy(result, start);
     strcat(result, end);
     return result;
@@ -21,7 +22,8 @@ void extract_first_word(char *line, char *result) {
     sscanf(line, "%s", result);
 }
 
-/* Return true if the first word in a line matches provided word, otherwise false. */
+/* Return true if the first word in a line matches provided word, otherwise
+ * false. */
 bool match_word(char *line, char *word) {
     char first_word[MAX_LINE_LENGTH];
     extract_first_word(line, first_word);
@@ -86,6 +88,21 @@ void word_before_brackets(char *line, char *word) {
     sscanf(temp_word, "%s", word);    /* Trim both sides */
 }
 
-int set_to_base16(int value) {
-    return (value & 0x0000FFFF);
+int set_to_base16(int value) { return (value & 0x0000FFFF); }
+
+bool should_process_line(char *line, int current_line) {
+    line = trim(line);
+    if (line == NULL) { /* Fake line :( */
+        return false;
+    }
+    printf("Line %d is:\n|\t%s\n", current_line, line);
+    if (*line == ';' || *line == '\0') { /* If comment or line's over */
+        return false;
+    }
+    if (strlen(line) > MAX_LINE_LENGTH - 2) {
+        g_error = ERROR_LINE_TOO_LONG;
+        print_error(current_line);
+        return false;
+    }
+    return true;
 }

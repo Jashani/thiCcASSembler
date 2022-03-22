@@ -1,6 +1,12 @@
-#include <stdio.h>
+#include "common.h"
+#include "errors.h"
+#include "globals.h"
+#include "symbol_table.h"
+#include "machine_code.h"
 
-bool second_pass(FILE *file, int *instruction_counter, int *data_counter);
-bool handle_entry_direction(FILE *file);
-bool complete_binary_encoding(FILE *file);
-bool handle_external_symbol();
+#ifndef SECOND_PASS_H
+#define SECOND_PASS_H
+
+bool second_pass(FILE *file);
+
+#endif
