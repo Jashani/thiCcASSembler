@@ -27,6 +27,7 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
                 continue;
             }
             current_content = concatenate(current_content, line);
+            continue;
         }
 
         else if (match_word(line, "macro")) {
