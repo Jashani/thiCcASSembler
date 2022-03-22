@@ -70,55 +70,6 @@ bool process_line(char *line, int current_line) {
     }
 }
 
-bool check_for_label(char *line, char *label) {
-    int index;
-    int label_iterator = 0;
-    char temp_label[MAX_LABEL_LENGTH];
-
-    while (*line != ':' && !isspace(*line) && *line != '\0' &&
-           label_iterator < MAX_LABEL_LENGTH) {
-        temp_label[label_iterator] = *line;
-        label_iterator++;
-        line++;
-    }
-    temp_label[label_iterator] = '\0';
-
-    /* Push until the end of first field to determine potential issues */
-    while (*line != ':' && !isspace(*line) && *line != '\0') {
-        label_iterator++;
-        line++;
-    }
-
-    if (*line != ':') { /* No label */
-        return false;
-    }
-
-    if (label_iterator > MAX_LABEL_LENGTH) {
-        g_error = ERROR_LABEL_TOO_LONG;
-        return false;
-    }
-
-    if (!isalpha(temp_label[0])) { /* Label start must be alphabetical */
-        g_error = ERROR_BAD_LABEL;
-        return false;
-    }
-
-    for (index = 1; index < label_iterator; index++) { /* Ensure proper format */
-        if (!isalpha(temp_label[index]) && !isdigit(temp_label[index])) {
-            g_error = ERROR_BAD_LABEL;
-            return false;
-        }
-    }
-
-    if (is_reserved(temp_label)) {
-        g_error = ERROR_RESERVED_KEYWORD;
-        return false;
-    }
-
-    strcpy(label, temp_label);
-    return true;
-}
-
 bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
     bool has_label = (label[0] != '\0') ? true : false;
@@ -351,6 +302,7 @@ bool add_addressing_data(addressing addressing_type, char *argument, int argumen
     }
 }
 
+/* Return the content of arguments of the format "arg1,arg2", cleaning spaces */
 void break_arguments(char *line, char *first, char *second) {
     char temp_first[MAX_LINE_LENGTH] = "\0";
     char temp_second[MAX_LINE_LENGTH] = "\0";
@@ -389,83 +341,6 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
     }
 
     return true;
-}
-
-addressing addressing_method(char *line) {
-    addressing method;
-    if (line == NULL || *line == '\0') {
-        return ADDRESSING_NONE;
-    } 
-    if (is_addressing_immediate(line)) {
-        method = ADDRESSING_IMMEDIATE;
-    } else if (is_register(line)) {
-        method = ADDRESSING_REGISTER;
-    } else if (is_addressing_index(line)) {
-        method = ADDRESSING_INDEX;
-    } else if (is_addressing_direct(line)) {
-        method = ADDRESSING_DIRECT;
-    } else {
-        method = ADDRESSING_ILLEGAL;
-    }
-    if (g_error != NO_ERRORS) {
-        method = ADDRESSING_ILLEGAL;
-    }
-    return method;
-}
-
-bool is_addressing_immediate(char *line) {
-    if (*line != '#') {
-        return false;
-    }
-    line++;
-    if (*line == '-' || *line == '+') {
-        line++;
-    }
-    while (*line != ',' && *line != '\0' && !isspace(*line)) {
-        if (!isdigit(*line)) {
-            g_error = ERROR_ADDRESSING;
-            return false;
-        }
-        line++;
-    }
-    return true;
-}
-
-bool is_addressing_index(char *line) {
-    char potential_register[4] = "\0";
-    char potential_label[MAX_LABEL_LENGTH] = "\0";
-    word_in_brackets(line, potential_register);
-    word_before_brackets(line, potential_label);
-    if (potential_register[0] != '\0') {
-        if (is_index_register(potential_register) && is_addressing_direct(potential_label)) {
-            return true;
-        }
-        g_error = ERROR_ADDRESSING;
-    }
-    return false;
-}
-
-bool is_addressing_direct(char *line) {
-    char *fake_label;
-    char placeholder[MAX_LINE_LENGTH];
-    fake_label = concatenate(line, ":");
-    if (check_for_label(fake_label, placeholder)) {
-        free(fake_label);
-        return true;
-    }
-    free(fake_label);
-    return false;
-}
-
-int extract_immediate_value(char *argument) {
-    int value;
-    sscanf(argument, "#%d", &value);
-    value = set_to_base16(value);
-    return value;
-}
-
-int set_to_base16(int value) {
-    return (value & 0x0000FFFF);
 }
 
 bool should_process_line(char *line, int current_line) {

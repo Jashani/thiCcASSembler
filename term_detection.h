@@ -31,6 +31,8 @@ typedef enum addressing {
 
 bool check_for_directive(char *line, directive *directive_to_set);
 bool check_for_instruction(char *line, int *instruction_index);
+bool check_for_label(char *line, char *label);
+
 int instruction_opcode(int index);
 int instruction_functor(int index);
 int instruction_arguments(int index);
@@ -45,5 +47,10 @@ bool is_index_register(char *term);
 bool is_reserved(char *term);
 
 bool word_in_array(char *term, int array_length, char *array[]);
+
+addressing addressing_method(char *line);
+bool is_addressing_immediate(char *line);
+bool is_addressing_direct(char *line);
+bool is_addressing_index(char *line);
 
 #endif
