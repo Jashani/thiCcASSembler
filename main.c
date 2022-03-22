@@ -1,7 +1,9 @@
 #include "main.h"
 
 /* using without free causes mem leak */
-char *assembly_path(char *file_name) { return concatenate(file_name, ".as"); }
+char *assembly_path(char *file_name) { 
+    return concatenate(file_name, ".as");
+}
 
 /* using without free causes mem leak */
 char *expanded_assembly_path(char *file_name) {
@@ -28,6 +30,7 @@ bool process_file(char *path) {
     }
     expanded_source_file = fopen(expanded_assembly_path(path), "r");
     first_pass(expanded_source_file);
+    fclose(expanded_source_file);
 
     return true;
 }
