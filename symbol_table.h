@@ -42,7 +42,7 @@ typedef symbol_node* symbol_list;
 
 bool add_symbol(char *identifier, int value, attribute_set attributes);
 bool add_attribute_to_symbol(char *identifier, attribute new_attribute);
-bool symbol_address(char *identifier, int *base, int *offset);
+bool symbol_data(char *identifier, int *base, int *offset, attribute_set *attributes);
 symbol_node *get_symbol(char *identifier);
 bool symbol_exists(char *identifier);
 bool finalise_data();

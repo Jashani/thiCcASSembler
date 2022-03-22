@@ -55,6 +55,8 @@ bool process_line_again(char *line, int current_line) {
     if (check_for_directive(line, &directive_type)) {
         return handle_directive_again(line, directive_type);
     }
+
+    return true;
 }
 
 bool handle_directive_again(char *line, directive directive_type) {

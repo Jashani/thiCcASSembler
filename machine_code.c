@@ -61,7 +61,7 @@ bool add_to_data_image(int data) {
 
     g_data_counter++;
     new_node->next = NULL;
-    new_node->value = data;
+    new_node->value = data | ENCODING_ABSOLUTE;
     new_node->future_label = NULL;
 
     if (data_image == NULL) {
@@ -97,19 +97,29 @@ void print_code_image() {
 }
 
 bool populate_symbols() {
+    printf("\nPopulating symbols\n");
     int current_base, current_offset;
+    attribute_set attributes;
+    encoding_type encoding;
     struct binary_node *current_node;
+
     current_node = code_image;
     while (current_node != NULL) {
         if (current_node->future_label != NULL) {
-            if (!symbol_address(current_node->future_label, &current_base, &current_offset)) {
+            if (!symbol_data(current_node->future_label, &current_base,
+                             &current_offset, &attributes)) {
                 return false;
             }
-            current_node->value = current_base;
+            if ((attributes & ATTRIBUTE_EXTERNAL) == ATTRIBUTE_EXTERNAL) {
+                encoding = ENCODING_EXTERNAL;
+            } else {
+                encoding = ENCODING_RELOCATABLE;
+            }
+            current_node->value = current_base | encoding;
             current_node = current_node->next;
-            current_node->value = current_offset;
+            current_node->value = current_offset | encoding;
         }
-
+        
         current_node = current_node->next;
     }
     return true;
@@ -119,7 +129,6 @@ bool write_image_output(FILE *file) {
     struct binary_node *current_node;
     int line = 100;
 
-    printf("Writing title\n");
     fprintf(file, "\t%d\t%d\n", g_instruction_counter - 100, g_data_counter);
     current_node =  code_image;
     while (current_node != NULL) {

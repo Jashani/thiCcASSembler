@@ -3,6 +3,7 @@
 symbol_list symbols = NULL;
 
 bool add_symbol(char *identifier, int value, attribute_set attributes) {
+    printf("Adding symbol: %s - %d\n", identifier, attributes);
     struct symbol data;
     struct symbol_node *new_node, *current_node;
 
@@ -47,7 +48,8 @@ bool symbol_exists(char *identifier) {
     return (get_symbol(identifier) != NULL);
 }
 
-bool symbol_address(char *identifier, int *base, int *offset) {
+bool symbol_data(char *identifier, int *base, int *offset,
+                 attribute_set *attributes) {
     struct symbol_node *current_node;
     current_node = get_symbol(identifier);
     if (current_node == NULL) {
@@ -56,6 +58,7 @@ bool symbol_address(char *identifier, int *base, int *offset) {
     }
     *base = current_node->data.base_address;
     *offset = current_node->data.offset;
+    *attributes = current_node->data.attributes;
     return true;
 }
 

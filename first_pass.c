@@ -66,12 +66,14 @@ bool process_line(char *line, int current_line) {
         g_error = ERROR_BAD_INSTRUCTION;
         return false;
     }
+
+    return true;
 }
 
 bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
     bool has_label = (label[0] != '\0') ? true : false;
-    printf("Handling directive.\n");
+    printf("Handling directive (%d).\n", directive_type);
 
     current_field = next_field(current_field);
     if (current_field == NULL) {
