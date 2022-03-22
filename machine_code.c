@@ -37,7 +37,9 @@ bool add_to_code_image(int data, char *future_label) {
     g_instruction_counter++;
     new_node->next = NULL;
     new_node->value = data;
-    new_node->future_label = future_label;
+    if (future_label != NULL && *future_label != '\0') {
+        new_node->future_label = strdup(future_label);
+    }
 
     printf("Adding to code image entry: %05x\n", data);
     if (code_image == NULL) {
@@ -89,7 +91,7 @@ void print_code_image() {
     struct binary_node *current_node;
     current_node = code_image;
     while (current_node != NULL) {
-        printf("Code image entry: %05x\n", current_node->value);
+        printf("Code image entry: %05x - %s\n", current_node->value, current_node->future_label);
         current_node = current_node->next;
     }
 }

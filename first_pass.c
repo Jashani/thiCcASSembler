@@ -214,7 +214,6 @@ bool handle_instruction(char *line, int instruction, char *label) {
     char first_argument[MAX_LINE_LENGTH] = "\0";
     char second_argument[MAX_LINE_LENGTH] = "\0";
     bool has_label = (label[0] != '\0') ? true : false;
-    char *label_value = (label[0] != '\0') ? label : NULL;
 
     printf("handling instruction\n");
     /* Add label to symbol table if exists */
@@ -295,12 +294,14 @@ bool encode_instruction(int arguments, int instruction,
 }
 
 bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
+    char potential_label[MAX_LABEL_LENGTH];
     if (addressing_type == ADDRESSING_IMMEDIATE) {
         add_to_code_image(ENCODING_ABSOLUTE | extract_immediate_value(argument), NULL);
     } else if (addressing_type == ADDRESSING_DIRECT ||
                addressing_type == ADDRESSING_INDEX) {
-        add_to_code_image(0, argument); /* Placeholders */
-        add_to_code_image(0, argument);
+        word_before_brackets(argument, potential_label);
+        add_to_code_image(0, potential_label);
+        add_to_code_image(0, potential_label);
     }
 }
 
