@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "common.h"
+#include "term_detection.h"
 
 #ifndef MACHINE_CODE_H
 #define MACHINE_CODE_H
@@ -28,6 +29,7 @@ typedef binary_node* binary_list;
 bool add_to_code_image(int data);
 bool add_to_data_image(int data);
 bool add_to_image(binary_list image, int data);
+int addressing_to_value(addressing to_convert);
 void print_data_image();
 void print_code_image();
 int build_binary_instruction(encoding_type encoding, int functor,
