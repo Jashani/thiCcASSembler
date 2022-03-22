@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "term_detection.h"
 #include "utilities.h"
+#include "symbol_table.h"
 
 #ifndef MACHINE_CODE_H
 #define MACHINE_CODE_H

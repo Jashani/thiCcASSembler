@@ -1,6 +1,14 @@
 #include "second_pass.h"
 
 bool second_pass(FILE *file) {
+    pass_over_file(file);
+
+    print_symbols();
+    print_data_image();
+    print_code_image();
+}
+
+bool pass_over_file(FILE *file) {
     char line[MAX_LINE_LENGTH];
     int current_line = 1;
     bool success;
@@ -10,7 +18,7 @@ bool second_pass(FILE *file) {
         printf("\n--- Line %d ---\n", current_line);
         if (should_process_line(line, current_line)) {
             printf("Processing line %d\n", current_line);
-            success = process_line(line, current_line);
+            success = process_line_again(line, current_line);
             if (!success) {
                 print_error(current_line);
             }
@@ -20,13 +28,9 @@ bool second_pass(FILE *file) {
 
         current_line++;
     }
-
-    print_symbols();
-    print_data_image();
-    print_code_image();
 }
 
-bool process_line(char *line, int current_line) {
+bool process_line_again(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH] = "\0";
     directive directive_type;
 
@@ -43,12 +47,14 @@ bool process_line(char *line, int current_line) {
 
     printf("Checking for directive.\n");
     if (check_for_directive(line, &directive_type)) {
-        return handle_directive(line, directive_type);
+        return handle_directive_again(line, directive_type);
     }
 }
 
-bool handle_directive(char *line, directive directive_type) {
+bool handle_directive_again(char *line, directive directive_type) {
     if (directive_type != DIRECTIVE_ENTRY) {
         return true;
     }
+    line = next_field(line);
+    return add_attribute_to_symbol(line, ATTRIBUTE_ENTRY);
 }

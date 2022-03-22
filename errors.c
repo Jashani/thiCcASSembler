@@ -51,5 +51,8 @@ void print_error(int current_line) {
         case ERROR_ARGUMENT_STRUCTURE:
             printf("Bad argument structure for instruction.\n");
             break;
+        case ERROR_NO_SYMBOL:
+            printf("Symbol isn't defined.\n");
+            break;
     }
 }
