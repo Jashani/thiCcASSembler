@@ -24,6 +24,11 @@ bool encode_instruction(int arguments, int instruction, char *first_argument,
 
 addressing addressing_method(char *line);
 bool is_addressing_immediate(char *line);
+bool is_addressing_direct(char *line);
+bool is_addressing_index(char *line);
+
+void word_in_brackets(char *line, char *word);
+void word_before_brackets(char *line, char *word);
 
 bool handle_directive_data(char *line);
 bool handle_directive_string(char *line);

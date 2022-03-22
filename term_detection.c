@@ -24,7 +24,9 @@ addressing second_argument_addressing[] = {
     ADDRESSING_NONE,     ADDRESSING_NONE,     ADDRESSING_NONE,
     ADDRESSING_NONE};
 
-char *registers[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
+char *registers[] = {"r0", "r1",  "r2",  "r3",  "r4",  "r5",  "r6", "r7",
+                     "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"};
+char *index_registers[] = {"r10", "r11", "r12", "r13", "r14", "r15"};
 
 #endif
 
@@ -84,7 +86,7 @@ int instruction_functor(int index) {
 int instruction_arguments(int index) {
     if (index <= 4) {
         return 2;
-    } else if (index >= 12) {
+    } else if (index >= 14) {
         return 0;
     } else {
         return 1;
@@ -110,9 +112,17 @@ bool is_directive(char *term) {
 }
 
 bool is_register(char *term) {
+    return word_in_array(term, REGISTER_COUNT, registers);
+}
+
+bool is_index_register(char *term) {
+    return word_in_array(term, INDEX_REGISTER_COUNT, index_registers);
+}
+
+bool word_in_array(char *term, int array_length, char *array[]) {
     int index;
-    for (index = 0; index < REGISTER_COUNT; index++) {
-        if (match_word(term, registers[index])) {
+    for (index = 0; index < array_length; index++) {
+        if (match_word(term, array[index])) {
             return true;
         }
     }
@@ -125,6 +135,11 @@ bool is_reserved(char *term) {
 
 bool is_addressing_legal(int instruction, addressing to_check, int which_argument) {
     addressing relevant_addressing;
+
+    if (to_check == ADDRESSING_ILLEGAL) {
+        return false;
+    }
+
     if (which_argument == FIRST) {
         relevant_addressing = first_argument_addressing[instruction];
     } else {

@@ -306,7 +306,6 @@ bool encode_instruction(int arguments, int instruction,
             first_addressing, target_register, NO_VALUE, NO_VALUE));
     } else if (arguments == 2) {
         second_addressing = addressing_method(second_argument);
-
         if (!is_addressing_legal(instruction, second_addressing, SECOND)) {
             g_error = ERROR_ADDRESSING;
             return false;
@@ -350,7 +349,7 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
         g_error = ERROR_ARGUMENT_STRUCTURE;
         return false;
     }
-    
+
     /* Look for sneaky commas */
     break_arguments(second_argument, temp1, temp2);
     if (*temp2 != '\0') {
@@ -369,15 +368,25 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
 }
 
 addressing addressing_method(char *line) {
+    addressing method;
     if (line == NULL || *line == '\0') {
         return ADDRESSING_NONE;
     } 
     if (is_addressing_immediate(line)) {
-        if (g_error != NO_ERRORS) {
-            return ADDRESSING_ILLEGAL;
-        }
-        return ADDRESSING_IMMEDIATE;
+        method = ADDRESSING_IMMEDIATE;
+    } else if (is_register(line)) {
+        method = ADDRESSING_REGISTER;
+    } else if (is_addressing_index(line)) {
+        method = ADDRESSING_INDEX;
+    } else if (is_addressing_direct(line)) {
+        method = ADDRESSING_DIRECT;
+    } else {
+        method = ADDRESSING_ILLEGAL;
     }
+    if (g_error != NO_ERRORS) {
+        method = ADDRESSING_ILLEGAL;
+    }
+    return method;
 }
 
 bool is_addressing_immediate(char *line) {
@@ -396,6 +405,42 @@ bool is_addressing_immediate(char *line) {
         line++;
     }
     return true;
+}
+
+bool is_addressing_index(char *line) {
+    char potential_register[4] = "\0";
+    char potential_label[MAX_LABEL_LENGTH] = "\0";
+    word_in_brackets(line, potential_register);
+    word_before_brackets(line, potential_label);
+    if (potential_register[0] != '\0') {
+        if (is_index_register(potential_register) && is_addressing_direct(potential_label)) {
+            return true;
+        }
+        g_error = ERROR_ADDRESSING;
+    }
+    return false;
+}
+
+void word_in_brackets(char *line, char *word) {
+    sscanf(line, "%*[^[][%3s]", word);
+}
+
+void word_before_brackets(char *line, char *word) {
+    char temp_word[MAX_LINE_LENGTH];
+    sscanf(line, "%[^[]", temp_word); /* Word before brackets */
+    sscanf(temp_word, "%s", word); /* Trim both sides */
+}
+
+bool is_addressing_direct(char *line) {
+    char *fake_label;
+    char placeholder[MAX_LINE_LENGTH];
+    fake_label = concatenate(line, ":");
+    if (check_for_label(fake_label, placeholder)) {
+        free(fake_label);
+        return true;
+    }
+    free(fake_label);
+    return false;
 }
 
 bool should_process_line(char *line, int current_line) {

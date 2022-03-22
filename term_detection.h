@@ -12,6 +12,7 @@
 
 #define INSTRUCTION_COUNT 16
 #define REGISTER_COUNT 8
+#define INDEX_REGISTER_COUNT 6
 
 #define FIRST 1
 #define SECOND 2
@@ -40,6 +41,9 @@ bool is_addressing_legal(int instruction, addressing to_check, int which_argumen
 bool is_instruction(char *term);
 bool is_directive(char *term);
 bool is_register(char *term);
+bool is_index_register(char *term);
 bool is_reserved(char *term);
+
+bool word_in_array(char *term, int array_length, char *array[]);
 
 #endif
