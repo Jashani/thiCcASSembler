@@ -194,7 +194,7 @@ bool handle_directive_data(char *line) {
             return false;
         }
 
-        add_to_data_image(current_number);
+        add_to_data_image(set_to_base16(current_number));
         line = trim(line);
         if (line == NULL || *line == '\0') {
             break;
@@ -268,7 +268,7 @@ bool handle_instruction(char *line, int instruction, char *label) {
     if (has_label && !add_symbol(label, g_instruction_counter, ATTRIBUTE_CODE)) {
         return false;
     }
-    add_to_code_image(instruction_opcode(instruction));
+    add_to_code_image(ENCODING_ABSOLUTE | instruction_opcode(instruction));
     /* Calculate size of instruction in image */
     arguments = instruction_arguments(instruction);
     line = next_field(line);
@@ -327,12 +327,12 @@ bool encode_instruction(int arguments, int instruction,
             word_in_brackets(first_argument, word_holder);
             target_register = register_to_value(word_holder);
         } else if (second_addressing == ADDRESSING_REGISTER) {
-            target_register = register_to_value(first_argument);
+            target_register = register_to_value(second_argument);
         }
 
         add_to_code_image(build_binary_instruction(
             ENCODING_ABSOLUTE, instruction_functor(instruction),
-            first_addressing, target_register, second_addressing,
+            second_addressing, target_register, first_addressing,
             source_register));
         add_addressing_data(first_addressing, first_argument, FIRST);
         add_addressing_data(second_addressing, second_argument, SECOND);
@@ -343,7 +343,7 @@ bool encode_instruction(int arguments, int instruction,
 
 bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
     if (addressing_type == ADDRESSING_IMMEDIATE) {
-        add_to_code_image(extract_immediate_value(argument));
+        add_to_code_image(ENCODING_ABSOLUTE | extract_immediate_value(argument));
     } else if (addressing_type == ADDRESSING_DIRECT ||
                addressing_type == ADDRESSING_INDEX) {
         add_to_code_image(0); /* Placeholders */
@@ -460,7 +460,12 @@ bool is_addressing_direct(char *line) {
 int extract_immediate_value(char *argument) {
     int value;
     sscanf(argument, "#%d", &value);
+    value = set_to_base16(value);
     return value;
+}
+
+int set_to_base16(int value) {
+    return (value & 0x0000FFFF);
 }
 
 bool should_process_line(char *line, int current_line) {

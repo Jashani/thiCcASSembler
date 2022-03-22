@@ -29,6 +29,7 @@ bool is_addressing_direct(char *line);
 bool is_addressing_index(char *line);
 
 int extract_immediate_value(char *argument);
+int set_to_base16(int value);
 
 bool handle_directive_data(char *line);
 bool handle_directive_string(char *line);
