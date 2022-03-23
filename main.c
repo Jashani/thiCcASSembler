@@ -93,14 +93,17 @@ bool process_file(char *path) {
 
 int main(int argc, char *argv[]) {
     int index;
+    int success = SUCCESS;
     int file_count = argc - 1;
     char **file_names = argv + 1;
 
     for (index = 0; index < file_count; index++) {
-        process_file(file_names[index]);
+        if (!process_file(file_names[index])) {
+            success = FAILURE;
+        }
         clear_symbols();
         clear_images();
     }
 
-    return SUCCESS;
+    return success;
 }
