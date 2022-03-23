@@ -41,5 +41,6 @@ int build_binary_instruction(encoding_type encoding, int functor,
 bool populate_symbols();
 bool write_image_output(FILE *file);
 bool write_binary_string(FILE *file, int data, int line);
+bool write_external_symbols(FILE *file);
 
 #endif

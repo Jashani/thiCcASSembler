@@ -117,3 +117,35 @@ void base_and_offset(int address, int *base, int *offset) {
     *base = address - (address % ADDRESS_INTERVAL);
     *offset = address % ADDRESS_INTERVAL;
 }
+
+bool attribute_symbol_exists(attribute to_find) {
+    struct symbol_node *current_node;
+    current_node = symbols;
+    while (current_node != NULL) {
+        if ((current_node->data.attributes & to_find) == to_find) {
+            return true;
+        }
+        current_node = current_node->next;
+    }
+    return false;
+}
+
+bool entry_symbols_exist() {
+    return attribute_symbol_exists(ATTRIBUTE_ENTRY);
+}
+
+void write_entry_symbols(FILE *file) {
+    struct symbol_node *current_node;
+    current_node = symbols;
+    while (current_node != NULL) {
+        if ((current_node->data.attributes & ATTRIBUTE_ENTRY) == ATTRIBUTE_ENTRY) {
+            fprintf(file, "%s,%d,%d\n", current_node->data.identifier,
+                    current_node->data.base_address, current_node->data.offset);
+        }
+        current_node = current_node->next;
+    }
+}
+
+bool external_symbols_exist() {
+    return attribute_symbol_exists(ATTRIBUTE_EXTERNAL);
+}

@@ -14,9 +14,18 @@ char *object_path(char *file_name) {
     return concatenate(file_name, ".ob");
 }
 
+char *entries_path(char *file_name) {
+    return concatenate(file_name, ".ent");
+}
+
+char *externals_path(char *file_name) {
+    return concatenate(file_name, ".ext");
+}
+
 bool process_file(char *path) {
     bool success;
     FILE *source_file, *expanded_source_file, *object_file;
+    FILE *entries_file, *externals_file;
 
     source_file = fopen(assembly_path(path), "r");
     if (source_file == NULL) {
@@ -51,6 +60,18 @@ bool process_file(char *path) {
     object_file = fopen(object_path(path), "w");
     write_image_output(object_file);
     fclose(object_file);
+
+    if (entry_symbols_exist()) {
+        entries_file = fopen(entries_path(path), "w");
+        write_entry_symbols(entries_file);
+        fclose(entries_file);
+    }
+
+    if (external_symbols_exist()) {
+        externals_file = fopen(externals_path(path), "w");
+        write_external_symbols(externals_file);
+        fclose(externals_file);
+    }
 
     return true;
 }

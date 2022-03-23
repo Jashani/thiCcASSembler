@@ -119,7 +119,7 @@ bool populate_symbols() {
             current_node = current_node->next;
             current_node->value = current_offset | encoding;
         }
-        
+
         current_node = current_node->next;
     }
     return true;
@@ -151,4 +151,26 @@ bool write_binary_string(FILE *file, int data, int line) {
             (data >> (4 * 2)) & 0xf,
             (data >> (4 * 1)) & 0xf,
             (data >> (4 * 0)) & 0xf);
+}
+
+bool write_external_symbols(FILE *file) {
+    printf("\nWriting exrternal symbols\n");
+    struct binary_node *current_node;
+    int address = 100;
+
+    current_node = code_image;
+    while (current_node != NULL) {
+        if (current_node->future_label != NULL) {
+            if ((current_node->value & ENCODING_EXTERNAL) == ENCODING_EXTERNAL) {
+                printf("Printing Label: %s\n", current_node->future_label);
+                fprintf(file, "%s BASE %d\n", current_node->future_label, address);
+                address++;
+                current_node = current_node->next;
+                fprintf(file, "%s OFFSET %d\n", current_node->future_label, address);
+            }
+        }
+        address++;
+        current_node = current_node->next;
+    }
+    return true;
 }

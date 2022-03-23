@@ -50,4 +50,9 @@ void clear_symbols();
 void print_symbols();
 void base_and_offset(int address, int *base, int *offset);
 
+bool attribute_symbol_exists(attribute to_find);
+bool entry_symbols_exist();
+void write_entry_symbols(FILE *file);
+bool external_symbols_exist();
+
 #endif
