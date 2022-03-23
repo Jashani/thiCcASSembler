@@ -99,7 +99,7 @@ void word_before_brackets(char *line, char *word) {
     sscanf(temp_word, "%s", word);    /* Trim both sides */
 }
 
-int set_to_base16(int value) {
+int set_to_size16(int value) {
     return (value & 0x0000FFFF);
 }
 

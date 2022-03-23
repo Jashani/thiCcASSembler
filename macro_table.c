@@ -66,4 +66,5 @@ void clear_macros() {
         free(current_node);
         current_node = next_node;
     }
+    macros = NULL;
 }

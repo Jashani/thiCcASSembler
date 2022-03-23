@@ -2,8 +2,8 @@ CC = gcc
 FLAGS = -ansi -Wall -pedantic
 O_FILES = utilities.o errors.o macro_table.o symbol_table.o term_detection.o machine_code.o pre_assembly.o first_pass.o second_pass.o
 
-main: $(O_FILES) main.c main.h
-	$(CC) -g $(O_FILES) main.c $(FLAGS) -o $@
+assembler: $(O_FILES) assembler.c assembler.h
+	$(CC) -g $(O_FILES) assembler.c $(FLAGS) -o $@
 
 second_pass.o: second_pass.c second_pass.h
 	$(CC) -c second_pass.c $(CFLAGS) -o $@

@@ -112,6 +112,7 @@ void clear_symbols() {
         free(current_node);
         current_node = next_node;
     }
+    symbols = NULL;
 }
 
 void base_and_offset(int address, int *base, int *offset) {

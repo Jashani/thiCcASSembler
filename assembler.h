@@ -1,4 +1,8 @@
-#include <stdio.h>
+/* Assembler
+ * The main file!
+ * 
+ */
+
 #include "common.h"
 #include "pre_assembly.h"
 #include "first_pass.h"

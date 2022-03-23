@@ -92,15 +92,11 @@ bool handle_directive(char *line, directive directive_type, char *label) {
     }
 
     if (directive_type == DIRECTIVE_DATA) {
-        /* Add to symbol table with attribute 'data' */
-        /* Add to image */
         printf("Directive is data\n");
         return handle_directive_data(current_field);
     }
 
     else if (directive_type == DIRECTIVE_STRING) {
-        /* Add to symbol table with attribute 'data' */
-        /* Add to image */
         printf("Directive is str\n");
         return handle_directive_string(current_field);
     }
@@ -145,7 +141,7 @@ bool handle_directive_data(char *line) {
             return false;
         }
 
-        add_to_data_image(set_to_base16(current_number));
+        add_to_data_image(set_to_size16(current_number));
         line = trim(line);
         if (line == NULL || *line == '\0') {
             break;
@@ -348,6 +344,6 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
 int extract_immediate_value(char *argument) {
     int value;
     sscanf(argument, "#%d", &value);
-    value = set_to_base16(value);
+    value = set_to_size16(value);
     return value;
 }

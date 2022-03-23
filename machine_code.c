@@ -101,6 +101,8 @@ void print_code_image() {
 void clear_images() {
     clear_image(code_image);
     clear_image(data_image);
+    code_image = NULL;
+    data_image = NULL;
 }
 
 void clear_image(binary_list image) {
@@ -145,7 +147,7 @@ bool populate_symbols() {
     return true;
 }
 
-bool write_image_output(FILE *file) {
+void write_image_output(FILE *file) {
     struct binary_node *current_node;
     int line = 100;
 
@@ -164,7 +166,7 @@ bool write_image_output(FILE *file) {
     }
 }
 
-bool write_binary_string(FILE *file, int data, int line) {
+void write_binary_string(FILE *file, int data, int line) {
     fprintf(file, "%04d A%x-B%x-C%x-D%x-E%x\n", line,
             (data >> (4 * 4)) & 0xf,
             (data >> (4 * 3)) & 0xf,
@@ -173,7 +175,7 @@ bool write_binary_string(FILE *file, int data, int line) {
             (data >> (4 * 0)) & 0xf);
 }
 
-bool write_external_symbols(FILE *file) {
+void write_external_symbols(FILE *file) {
     printf("\nWriting exrternal symbols\n");
     struct binary_node *current_node;
     int address = 100;
@@ -192,5 +194,4 @@ bool write_external_symbols(FILE *file) {
         address++;
         current_node = current_node->next;
     }
-    return true;
 }

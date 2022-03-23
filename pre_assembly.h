@@ -15,12 +15,4 @@
  */
 bool pre_assembly(FILE *source_file, FILE *expanded_source_file);
 
-/**
- * @brief Delete the line currently read in the file
- * 
- * @param file 
- * @return bool success
- */
-bool delete_current_line(FILE *file);
-
 #endif

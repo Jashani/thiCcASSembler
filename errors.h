@@ -1,3 +1,7 @@
+/* Errors
+ * Provides error printing capabilities
+ */
+
 #include "globals.h"
 #include "common.h"
 
@@ -28,6 +32,11 @@ typedef enum error_types {
     ERROR_CANT_FIND_SYMBOL
 } error_type;
 
+/**
+ * @brief prints error based on global variable g_error
+ * 
+ * @param current_line the line on which the error was found
+ */
 void print_error(int current_line);
 
 #endif

@@ -1,4 +1,4 @@
-#include "main.h"
+#include "assembler.h"
 
 /* using without free causes mem leak */
 char *assembly_path(char *file_name) { 
