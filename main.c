@@ -56,7 +56,6 @@ bool process_file(char *path) {
     if (!success) {
         return false;
     }
-    printf("Time to write!\n");
     object_file = fopen(object_path(path), "w");
     write_image_output(object_file);
     fclose(object_file);
