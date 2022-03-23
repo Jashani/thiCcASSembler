@@ -4,8 +4,8 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
     char line[MAX_LINE_LENGTH];
     char potential_macro[MAX_LINE_LENGTH];
     char current_name[MAX_LINE_LENGTH];
-    char *untrimmed_name;
-    char *current_content = "";
+    char *untrimmed_name = NULL;
+    char *current_content = calloc(1, 1); /* Allocating an empty string */
     bool is_macro = false;
     int current_line = 0;
     bool success = true;
@@ -23,10 +23,11 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
             if (match_word(line, "endm")) {
                 is_macro = false;
                 add_macro(current_name, current_content);
+                free(current_content);
                 current_content = "";
                 continue;
             }
-            current_content = concatenate(current_content, line);
+            current_content = extend(current_content, line);
             continue;
         }
 

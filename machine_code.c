@@ -96,6 +96,24 @@ void print_code_image() {
     }
 }
 
+void clear_images() {
+    clear_image(code_image);
+    clear_image(data_image);
+}
+
+void clear_image(binary_list image) {
+    struct binary_node *current_node, *next_node;
+    current_node = image;
+    while (current_node != NULL) {
+        next_node = current_node->next;
+        if (current_node->future_label != NULL) {
+            free(current_node->future_label);
+        }
+        free(current_node);
+        current_node = next_node;
+    }
+}
+
 bool populate_symbols() {
     printf("\nPopulating symbols\n");
     int current_base, current_offset;

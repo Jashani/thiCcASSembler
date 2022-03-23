@@ -9,6 +9,17 @@ char *concatenate(char *start, char *end) {
     return result;
 }
 
+/* Same as concatanate, but free 'current', assuming the usage x = extend(x, y) */
+char *extend(char *current, char *extra) {
+    const int NULL_INDEX = 1;
+    char *result =
+        (char *)safe_malloc(strlen(current) + strlen(extra) + NULL_INDEX);
+    strcpy(result, current);
+    strcat(result, extra);
+    free(current);
+    return result;
+}
+
 void *safe_malloc(long size) {
     void *pointer = malloc(size);
     if (pointer == NULL) {

@@ -5,6 +5,7 @@
 #define UTILITIES_H
 
 char *concatenate(char *start, char *end);
+char *extend(char *current, char *extra);
 void *safe_malloc(long size);
 void extract_first_word(char *line, char *result);
 bool match_word(char *line, char *word);

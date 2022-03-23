@@ -103,11 +103,12 @@ void print_symbols() { /* Debug method */
     }
 }
 
-void clear_symbols() { /* This needs to be redone properly */
+void clear_symbols() {
     struct symbol_node *current_node, *next_node;
     current_node = symbols;
     while (current_node != NULL) {
         next_node = current_node->next;
+        free(current_node->data.identifier);
         free(current_node);
         current_node = next_node;
     }
