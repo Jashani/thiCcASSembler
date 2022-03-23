@@ -293,7 +293,7 @@ bool encode_instruction(int arguments, int instruction,
 }
 
 bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
-    char potential_label[MAX_LABEL_LENGTH];
+    char potential_label[MAX_LABEL_LENGTH] = "\0";
     if (addressing_type == ADDRESSING_IMMEDIATE) {
         add_to_code_image(ENCODING_ABSOLUTE | extract_immediate_value(argument), NULL);
     } else if (addressing_type == ADDRESSING_DIRECT ||

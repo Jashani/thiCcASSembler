@@ -39,6 +39,8 @@ bool add_to_code_image(int data, char *future_label) {
     new_node->value = data;
     if (future_label != NULL && *future_label != '\0') {
         new_node->future_label = strdup(future_label);
+    } else {
+        new_node->future_label = NULL;
     }
 
     printf("Adding to code image entry: %05x\n", data);
