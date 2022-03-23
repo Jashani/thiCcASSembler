@@ -88,8 +88,6 @@ bool process_file(char *path) {
         free(path_container);
     }
 
-    clear_symbols();
-    clear_images();
     return true;
 }
 
@@ -100,6 +98,8 @@ int main(int argc, char *argv[]) {
 
     for (index = 0; index < file_count; index++) {
         process_file(file_names[index]);
+        clear_symbols();
+        clear_images();
     }
 
     return SUCCESS;
