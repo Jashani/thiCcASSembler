@@ -1,7 +1,7 @@
 #include "first_pass.h"
 
+/* Run first pass on provided file. */
 bool first_pass(FILE *file) {
-    printf("\n#####\nFIRST PASS\n#####\n\n");
     char line[MAX_LINE_LENGTH];
     int current_line = 1;
     bool success, absolute_success = true;
@@ -9,57 +9,51 @@ bool first_pass(FILE *file) {
     g_instruction_counter = 100;
     g_data_counter = 0;
 
+    /* Process all lines in file */
     while (fgets(line, MAX_LINE_LENGTH, file) != NULL) {
         g_error = NO_ERRORS;
-        printf("\n--- Line %d ---\n", current_line);
         if (should_process_line(line, current_line)) {
-            printf("Processing line %d\n", current_line);
             success = process_line(line, current_line);
             if (!success) {
                 absolute_success = false;
                 print_error(current_line);
             }
-        } else {
-            printf("Skipping line %d\n", current_line);
         }
-
         current_line++;
     }
 
-    printf("Data counter: %d | Code counter: %d\n", g_data_counter, g_instruction_counter);
+    /* Update image values */
     finalise_data();
-    print_symbols();
-    print_data_image();
-    print_code_image();
     return absolute_success;
 }
 
+/* Determine whether line contains label, directive, or instruction.
+ * Act accordingly.
+ */
 bool process_line(char *line, int current_line) {
     char label[MAX_LABEL_LENGTH] = "\0";
     directive directive_type;
     int instruction;
 
+    /* Clean the start of the line and validate its integrity */
     line = trim(line);
     if (!valid_start(line)) {
         return false;
     }
 
-    printf("Checking for label\n");
+    /* If label exists, save it and continue into the line */
     if (check_for_label(line, label)) {
         line = next_field(line);
-        printf("Label is: %s\n", label);
     } else if (g_error != NO_ERRORS) {
         return false;
     }
 
-    printf("Checking for directive.\n");
     if (check_for_directive(line, &directive_type)) {
         return handle_directive(line, directive_type, label);
     } else if (g_error != NO_ERRORS) {
         return false;
     }
 
-    printf("Checking for instruction\n");
     if (check_for_instruction(line, &instruction)) {
         return handle_instruction(line, instruction, label);
     } else {
@@ -67,62 +61,65 @@ bool process_line(char *line, int current_line) {
         return false;
     }
 
+    /* Line successfully processed */
     return true;
 }
 
+/* Attach label to directive if exists, then process directive appropriately. */
 bool handle_directive(char *line, directive directive_type, char *label) {
     char *current_field = line;
-    bool has_label = (label[0] != '\0') ? true : false;
-    printf("Handling directive (%d).\n", directive_type);
+    bool has_label = (label[0] != '\0') ? true : false; /* For legibility */
 
+    /* Read directive arguments */
     current_field = next_field(current_field);
     if (current_field == NULL) {
         g_error = ERROR_MISSING_ARGUMENTS;
         return false;
     }
 
+    /* Add symbol for directive if label exists */
     if (has_label) {
         if (directive_type != DIRECTIVE_DATA && directive_type != DIRECTIVE_STRING) {
             g_error = ERROR_CANNOT_LABEL_DIRECTIVE;
             return false;
         }
-        if (!add_symbol(label, g_data_counter, ATTRIBUTE_DATA)) { /* mock values */
+        if (!add_symbol(label, g_data_counter, ATTRIBUTE_DATA)) {
             return false;
         }
     }
 
     if (directive_type == DIRECTIVE_DATA) {
-        printf("Directive is data\n");
         return handle_directive_data(current_field);
     }
 
     else if (directive_type == DIRECTIVE_STRING) {
-        printf("Directive is str\n");
         return handle_directive_string(current_field);
     }
 
     else if (directive_type == DIRECTIVE_ENTRY) {
         /* Will be handled during second pass */
-        printf("Directive is ent\n");
         return true;
     }
 
     else if (directive_type == DIRECTIVE_EXTERNAL) {
-        printf("Directive is ext\n");
         handle_directive_extern(current_field);
         return true;
     }
 }
 
+/* Handle directive of type data;
+ * Ensure each integer fits appropriate format, add each to data image */
 bool handle_directive_data(char *line) {
     bool number_exists;
     int current_number;
 
+    /* Ensure legal data start */
     if (!isdigit(*line) && *line != '-' && *line != '+') {
         g_error = ERROR_SYNTAX;
         return false;
     }
 
+    /* Collect all integers in line */
     while (line != NULL && *line != '\0') {
         number_exists = false;
         sscanf(line, "%d", &current_number);
@@ -131,6 +128,7 @@ bool handle_directive_data(char *line) {
             line++;
         }
 
+        /* Ensure there is actually a number in the line */
         while (isdigit(*line)) {
             number_exists = true;
             line++;
@@ -141,12 +139,14 @@ bool handle_directive_data(char *line) {
             return false;
         }
 
+        /* Add to data image and continue to the next number */
         add_to_data_image(set_to_size16(current_number));
         line = trim(line);
         if (line == NULL || *line == '\0') {
             break;
         }
 
+        /* Ensure legal line continuation */
         if (*line != ',' || *(trim(line + 1)) == '\0') {
             g_error = ERROR_SYNTAX;
             return false;
@@ -159,6 +159,7 @@ bool handle_directive_data(char *line) {
     return true;
 }
 
+/* Ensure  line is wrapped with quotes ("...") and add string to data image */
 bool handle_directive_string(char *line) {    
     if (*line != '"') {
         g_error = ERROR_MISSING_QUOTES;
@@ -171,10 +172,10 @@ bool handle_directive_string(char *line) {
         return false;
     }
 
+    /* Add each character to data image */
     while (line != NULL && *line != '"' && *line != '\0') {
         add_to_data_image(*line);
         line++;
-        /* Extend data image */
     }
     add_to_data_image('\0'); /* For terminating character */
 
@@ -183,6 +184,7 @@ bool handle_directive_string(char *line) {
         return false;
     }
 
+    /* Validate line integrity */
     line++;
     line = trim(line);
     if (line != NULL && *line != '\0') {
@@ -193,6 +195,7 @@ bool handle_directive_string(char *line) {
     return true;
 }
 
+/* Add extern symbol with empty values */
 bool handle_directive_extern(char *line) {
     char label[MAX_LABEL_LENGTH];
     extract_first_word(line, label);
@@ -204,11 +207,12 @@ bool handle_directive_extern(char *line) {
     return add_symbol(label, 0, ATTRIBUTE_EXTERNAL);
 }
 
+/* Parse instruction and encode to code image */
 bool handle_instruction(char *line, int instruction, char *label) {
     int arguments;
     char first_argument[MAX_LINE_LENGTH] = "\0";
     char second_argument[MAX_LINE_LENGTH] = "\0";
-    bool has_label = (label[0] != '\0') ? true : false;
+    bool has_label = (label[0] != '\0') ? true : false; /* For legibility */
 
     printf("handling instruction\n");
     /* Add label to symbol table if exists */
@@ -223,6 +227,7 @@ bool handle_instruction(char *line, int instruction, char *label) {
         return true;
     }
 
+    /* Split arguments given to instruction */
     break_arguments(line, first_argument, second_argument);
     if (!valid_line(line, arguments, first_argument, second_argument)) {
         return false;
@@ -231,12 +236,14 @@ bool handle_instruction(char *line, int instruction, char *label) {
     return encode_instruction(arguments, instruction, first_argument, second_argument);
 }
 
+/* Format instruction and arguments, then add to code image */
 bool encode_instruction(int arguments, int instruction, 
                         char *first_argument, char *second_argument) {
     int first_addressing, second_addressing;
     char word_holder[MAX_LINE_LENGTH];
     int source_register = NO_VALUE, target_register = NO_VALUE;
 
+    /* Determine and validate addressing method for first argument */
     if (arguments >= 1) {
         first_addressing = addressing_method(first_argument);
         if (!is_addressing_legal(instruction, first_addressing, FIRST)) {
@@ -245,8 +252,10 @@ bool encode_instruction(int arguments, int instruction,
         }
     }
 
+    /* Encode instruction */
     if (arguments == 1) {
         if (first_addressing == ADDRESSING_INDEX) {
+            /* Parse index addressing */
             word_in_brackets(first_argument, word_holder);
             target_register = register_to_value(word_holder);
         } else if (first_addressing == ADDRESSING_REGISTER) {
@@ -258,6 +267,7 @@ bool encode_instruction(int arguments, int instruction,
             first_addressing, target_register, NO_VALUE, NO_VALUE), NULL);
         add_addressing_data(first_addressing, first_argument, FIRST);
     } else if (arguments == 2) {
+        /* Determine and validate addressing method for second argument */
         second_addressing = addressing_method(second_argument);
         if (!is_addressing_legal(instruction, second_addressing, SECOND)) {
             g_error = ERROR_ADDRESSING;
@@ -265,12 +275,14 @@ bool encode_instruction(int arguments, int instruction,
         }
 
         if (first_addressing == ADDRESSING_INDEX) {
+            /* Parse index addressing */
             word_in_brackets(first_argument, word_holder);
             source_register = register_to_value(word_holder);
         } else if (first_addressing == ADDRESSING_REGISTER) {
             source_register = register_to_value(first_argument);
         }
         if (second_addressing == ADDRESSING_INDEX) {
+            /* Parse index addressing */
             word_in_brackets(first_argument, word_holder);
             target_register = register_to_value(word_holder);
         } else if (second_addressing == ADDRESSING_REGISTER) {
@@ -288,6 +300,7 @@ bool encode_instruction(int arguments, int instruction,
     return true;
 }
 
+/* Add further data for relevant addressing type */
 bool add_addressing_data(addressing addressing_type, char *argument, int argument_slot) {
     char potential_label[MAX_LABEL_LENGTH] = "\0";
     if (addressing_type == ADDRESSING_IMMEDIATE) {
@@ -341,9 +354,11 @@ bool valid_line(char *line, int arguments, char *first_argument, char *second_ar
     return true;
 }
 
+/* Extract value for immediate addressing */
 int extract_immediate_value(char *argument) {
     int value;
     sscanf(argument, "#%d", &value);
+    /* Ensure proper format */
     value = set_to_size16(value);
     return value;
 }

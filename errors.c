@@ -1,5 +1,6 @@
 #include "errors.h"
 
+/* Print error based on g_error */
 void print_error(int current_line) {
     printf("Error on line %d: ", current_line);
     if (current_line == UNKNOWN_LINE) {

@@ -1,11 +1,9 @@
 #include "assembler.h"
 
-/* using without free causes mem leak */
 char *assembly_path(char *file_name) { 
     return concatenate(file_name, ".as");
 }
 
-/* using without free causes mem leak */
 char *expanded_assembly_path(char *file_name) {
     return concatenate(file_name, ".am");
 }
@@ -22,6 +20,9 @@ char *externals_path(char *file_name) {
     return concatenate(file_name, ".ext");
 }
 
+/* On given path, run pre assembly, first pass, and second pass.
+ * After processing, export derived data to files.
+ */
 bool process_file(char *path) {
     bool success;
     char *path_container;
@@ -91,6 +92,7 @@ bool process_file(char *path) {
     return true;
 }
 
+/* Process all files provided in arguments. Clean up after each file. */
 int main(int argc, char *argv[]) {
     int index;
     int success = SUCCESS;
