@@ -1,5 +1,6 @@
 #include "assembler.h"
 
+/* Append suffixes to paths */
 char *assembly_path(char *file_name) { 
     return concatenate(file_name, ".as");
 }

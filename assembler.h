@@ -1,6 +1,6 @@
 /* Assembler
  * The main file!
- * 
+ * Usage: .../assembler file1 file2 ...
  */
 
 #include "common.h"
@@ -29,7 +29,5 @@ void assemblify_paths(int path_count, char *file_names[], char *paths[]);
  * @return bool success value
  */
 bool process_file(char *path);
-
-bool create_output_files();
 
 #endif
