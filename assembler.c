@@ -99,7 +99,9 @@ int main(int argc, char *argv[]) {
     int file_count = argc - 1;
     char **file_names = argv + 1;
 
+    /* Go over all provided files */
     for (index = 0; index < file_count; index++) {
+        printf("Processing: %s\n", file_names[index]);
         if (!process_file(file_names[index])) {
             success = FAILURE;
         }

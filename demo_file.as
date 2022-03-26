@@ -1,4 +1,4 @@
-; file ps.as
+; file demo_file.as
 .entry LIST
 .extern W
 MAIN: add r3, LIST
