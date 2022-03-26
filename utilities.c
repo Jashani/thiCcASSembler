@@ -1,5 +1,6 @@
 #include "utilities.h"
 
+/* Concatenante two terms together */
 char *concatenate(char *start, char *end) {
     const int NULL_INDEX = 1;
     char *result =
@@ -20,6 +21,7 @@ char *extend(char *current, char *extra) {
     return result;
 }
 
+/* Malloc + check */
 void *safe_malloc(long size) {
     void *pointer = malloc(size);
     if (pointer == NULL) {
@@ -29,6 +31,7 @@ void *safe_malloc(long size) {
     return pointer;
 }
 
+/* Return the first word in a line */
 void extract_first_word(char *line, char *result) {
     sscanf(line, "%s", result);
 }
@@ -44,6 +47,7 @@ bool match_word(char *line, char *word) {
     return false;
 }
 
+/* Skip to next field in a line */
 char *next_field(char *line) {
     if (line == NULL) {
         return NULL;
@@ -59,6 +63,7 @@ char *next_field(char *line) {
     return line;
 }
 
+/* Trim whitespaces before line */
 char *trim(char *line) {
     if (line == NULL || strlen(line) <= 1) {
         return NULL;
@@ -69,6 +74,7 @@ char *trim(char *line) {
     return line;
 }
 
+/* Return wether strings are identical */
 bool strings_match(char *first, char *second) {
     char temp;
     if (first == NULL || second == NULL) {
@@ -89,10 +95,12 @@ bool strings_match(char *first, char *second) {
     return true;
 }
 
+/* Return content in brackets */
 void word_in_brackets(char *line, char *word) {
     sscanf(line, "%*[^[][%3s]", word);
 }
 
+/* Return content before brackets */
 void word_before_brackets(char *line, char *word) {
     char temp_word[MAX_LINE_LENGTH];
     sscanf(line, "%[^[]", temp_word); /* Word before brackets */
@@ -103,15 +111,21 @@ int set_to_size16(int value) {
     return (value & 0x0000FFFF);
 }
 
+/* Return whether line should be processed */
 bool should_process_line(char *line, int current_line) {
     line = trim(line);
-    if (line == NULL) { /* Fake line :( */
+
+     /* Fake line :( */
+    if (line == NULL) {
         return false;
     }
-    printf("Line %d is:\n|\t%s\n", current_line, line);
-    if (*line == ';' || *line == '\0') { /* If comment or line's over */
+
+    /* If comment or line's over */
+    if (*line == ';' || *line == '\0') {
         return false;
     }
+
+    /* Line is too long! */
     if (strlen(line) > MAX_LINE_LENGTH - 2) {
         g_error = ERROR_LINE_TOO_LONG;
         print_error(current_line);
@@ -120,13 +134,15 @@ bool should_process_line(char *line, int current_line) {
     return true;
 }
 
+/* Ensure start of line is valid */
 bool valid_start(char *line) {
     if (line == NULL) {
         g_error = ERROR_FAILED_READ;
         return false;
     }
 
-    if (!isalpha(*line) && *line != '.') { /* Legal starting characters */
+     /* Legal starting characters */
+    if (!isalpha(*line) && *line != '.') {
         g_error = ERROR_SYNTAX;
         return false;
     }

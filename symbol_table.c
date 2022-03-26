@@ -2,11 +2,12 @@
 
 symbol_list symbols = NULL;
 
+/* Add symbol to symbol table */
 bool add_symbol(char *identifier, int value, attribute_set attributes) {
-    printf("Adding symbol: %s - %d\n", identifier, attributes);
     struct symbol data;
     struct symbol_node *new_node, *current_node;
 
+    /* Ensure unique */
     if (symbol_exists(identifier)) {
         g_error = ERROR_SYMBOL_EXISTS;
         return false;
@@ -20,10 +21,12 @@ bool add_symbol(char *identifier, int value, attribute_set attributes) {
     new_node->next = NULL;
     new_node->data = data;
 
+    /* If we haven't created the table yet, set it to this node. */
     if (symbols == NULL) {
         symbols = new_node;
         return true;
     }
+
     current_node = symbols;
     while (current_node->next != NULL) {
         current_node = current_node->next;
@@ -33,6 +36,7 @@ bool add_symbol(char *identifier, int value, attribute_set attributes) {
     return true;
 }
 
+/* Add a new attribute to an existing symbol */
 bool add_attribute_to_symbol(char *identifier, attribute new_attribute) {
     struct symbol_node *current_node;
     current_node = get_symbol(identifier);
@@ -44,10 +48,12 @@ bool add_attribute_to_symbol(char *identifier, attribute new_attribute) {
     return true;
 }
 
+/* Return whether symbol exists */
 bool symbol_exists(char *identifier) {
     return (get_symbol(identifier) != NULL);
 }
 
+/* Set symbol data to given arguments, according to identifier */
 bool symbol_data(char *identifier, int *base, int *offset,
                  attribute_set *attributes) {
     struct symbol_node *current_node;
@@ -56,12 +62,14 @@ bool symbol_data(char *identifier, int *base, int *offset,
         g_error = ERROR_NO_SYMBOL;
         return false;
     }
+
     *base = current_node->data.base_address;
     *offset = current_node->data.offset;
     *attributes = current_node->data.attributes;
     return true;
 }
 
+/* Return specified symbol */
 symbol_node *get_symbol(char *identifier) {
     struct symbol_node *current_node = symbols;
     while (current_node != NULL) {
@@ -73,7 +81,8 @@ symbol_node *get_symbol(char *identifier) {
     return NULL;
 }
 
-bool finalise_data() {
+/* Set data entry values according to instruction cout */
+void finalise_data() {
     int new_value;
     struct symbol_node *current_node;
     current_node = symbols;
@@ -88,21 +97,7 @@ bool finalise_data() {
     }
 }
 
-void print_symbols() { /* Debug method */
-    struct symbol_node *current_node;
-    current_node = symbols;
-    printf("Printing symbols.\n\n");
-    while (current_node != NULL) {
-        printf("Symbol %s:\nValue: %d, Base: %d, Offset: %d, Attributes: %d\n",
-               current_node->data.identifier,
-               current_node->data.value,
-               current_node->data.base_address,
-               current_node->data.offset,
-               current_node->data.attributes);
-        current_node = current_node->next;
-    }
-}
-
+/* Free symbol data */
 void clear_symbols() {
     struct symbol_node *current_node, *next_node;
     current_node = symbols;
@@ -115,11 +110,13 @@ void clear_symbols() {
     symbols = NULL;
 }
 
+/* Return base and offset values calculated according to provided address */
 void base_and_offset(int address, int *base, int *offset) {
     *base = address - (address % ADDRESS_INTERVAL);
     *offset = address % ADDRESS_INTERVAL;
 }
 
+/* Return whether specified attribute exists on any symbol */
 bool attribute_symbol_exists(attribute to_find) {
     struct symbol_node *current_node;
     current_node = symbols;
@@ -132,10 +129,12 @@ bool attribute_symbol_exists(attribute to_find) {
     return false;
 }
 
+/* Return whether any symbol is marked as entry */
 bool entry_symbols_exist() {
     return attribute_symbol_exists(ATTRIBUTE_ENTRY);
 }
 
+/* Export entry symbols data to file */
 void write_entry_symbols(FILE *file) {
     struct symbol_node *current_node;
     current_node = symbols;
@@ -148,6 +147,7 @@ void write_entry_symbols(FILE *file) {
     }
 }
 
+/* Return whether any symbol is marked as external */
 bool external_symbols_exist() {
     return attribute_symbol_exists(ATTRIBUTE_EXTERNAL);
 }

@@ -1,5 +1,6 @@
 #include "pre_assembly.h"
 
+/* Unfold macros through file */
 bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
     char line[MAX_LINE_LENGTH];
     char potential_macro[MAX_LINE_LENGTH];
@@ -10,6 +11,7 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
     int current_line = 0;
     bool success = true;
 
+    /* Read through whole file */
     while (fgets(line, MAX_LINE_LENGTH, source_file) != NULL) {
         current_line++;
         /* if first word is macro found in macro table, expand it and continue */
@@ -19,7 +21,9 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
             continue;
         }
 
+        /* Keep adding to macro content until 'endm' */
         if (is_macro) {
+            /* Once found endm, finalise macro and add to table */
             if (match_word(line, "endm")) {
                 is_macro = false;
                 add_macro(current_name, current_content);
@@ -31,10 +35,11 @@ bool pre_assembly(FILE *source_file, FILE *expanded_source_file) {
             continue;
         }
 
+        /* Initialise macro recording process */
         else if (match_word(line, "macro")) {
             untrimmed_name = next_field(trim(line));
             extract_first_word(untrimmed_name, current_name);
-            if (is_directive(current_name) || is_instruction(current_name) || is_register(current_name)) {
+            if (is_reserved(current_name)) {
                 g_error = ERROR_RESERVED_KEYWORD;
                 print_error(current_line);
                 success = false;

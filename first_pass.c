@@ -214,7 +214,6 @@ bool handle_instruction(char *line, int instruction, char *label) {
     char second_argument[MAX_LINE_LENGTH] = "\0";
     bool has_label = (label[0] != '\0') ? true : false; /* For legibility */
 
-    printf("handling instruction\n");
     /* Add label to symbol table if exists */
     if (has_label && !add_symbol(label, g_instruction_counter, ATTRIBUTE_CODE)) {
         return false;

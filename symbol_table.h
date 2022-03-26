@@ -90,10 +90,8 @@ bool symbol_exists(char *identifier);
 /**
  * @brief update values for data image, as they're unknown until
  * code has been processed
- *
- * @return true if success, false otherwise
  */
-bool finalise_data();
+void finalise_data();
 
 /**
  * @brief free symbol data
